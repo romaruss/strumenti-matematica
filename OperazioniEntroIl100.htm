@@ -38,7 +38,6 @@
             height: 100%;
             width: 100%;
             background-color: #4caf50; /* Colore verde */
-            transition: width 1s; /* Transizione per la barra */
         }
         .square {
             display: inline-block;
@@ -48,11 +47,28 @@
             margin: 5px;
             transition: background-color 0.3s;
         }
+        #config {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            text-align: left;
+        }
+        #slider {
+            width: 200px;
+        }
     </style>
 </head>
 <body>
 
     <h1>Operazioni entro il 100</h1>
+    <div id="config">
+        <label for="timeSlider">Tempo (5-30 secondi):</label>
+        <input type="range" id="timeSlider" min="5" max="30" value="10">
+        <span id="timeValue">10</span> secondi<br>
+        
+        <label><input type="checkbox" id="additionCheck" checked> Solo somme</label><br>
+        <label><input type="checkbox" id="subtractionCheck" checked> Solo sottrazioni</label><br>
+    </div>
     <button id="startButton">Inizia</button>
     <div id="operation"></div>
     <div id="progressBar"><div id="progress"></div></div>
@@ -66,19 +82,30 @@
         const results = [];
         const maxOperations = 10;
         let timerInterval;
-        let progressBarWidth = 150;
+        let progressBarWidth = 100;
+        let operationTime = 10; // Default time in seconds
+        let timeInterval; // Variable to hold the interval for changing operations
+
+        // Update the displayed value of the slider
+        document.getElementById('timeSlider').addEventListener('input', function() {
+            operationTime = this.value;
+            document.getElementById('timeValue').textContent = operationTime;
+        });
 
         function generateOperation() {
             let operation = '';
             let result = 0;
-            const isAddition = Math.random() < 0.5; // 50% chance for addition or subtraction
+            const onlyAddition = document.getElementById('additionCheck').checked && !document.getElementById('subtractionCheck').checked;
+            const onlySubtraction = !document.getElementById('additionCheck').checked && document.getElementById('subtractionCheck').checked;
+            const canAdd = !onlySubtraction; // Can do addition if not limited
+            const canSubtract = !onlyAddition; // Can do subtraction if not limited
             
-            if (isAddition) {
+            if (canAdd && (Math.random() < 0.5 || !canSubtract)) {
                 const num1 = Math.floor(Math.random() * 101); // 0 to 100
                 const num2 = Math.floor(Math.random() * (101 - num1)); // 0 to (100 - num1)
                 operation = `${num1} + ${num2}`;
                 result = num1 + num2;
-            } else {
+            } else if (canSubtract) {
                 const num1 = Math.floor(Math.random() * 101); // 0 to 100
                 const num2 = Math.floor(Math.random() * (num1 + 1)); // 0 to num1
                 operation = `${num1} - ${num2}`;
@@ -95,28 +122,33 @@
                 document.getElementById('operation').textContent = operations[currentOperationIndex];
                 document.getElementById('squaresContainer').children[currentOperationIndex].style.backgroundColor = 'red'; // Colora il quadratino
                 currentOperationIndex++;
-                setTimeout(displayOperation, 15000); // Cambia operazione ogni 10 secondi
-                progressBarWidth = 100; // Resetta la larghezza della barra
-                document.getElementById('progress').style.width = '100%'; // Resetta la barra
+                resetProgressBar(); // Riempie la barra completamente
                 startProgressBar(); // Avvia la barra di avanzamento
             } else {
                 endGame();
             }
         }
 
+        function resetProgressBar() {
+            progressBarWidth = 100; // Resetta la larghezza della barra
+            document.getElementById('progress').style.width = '100%'; // Riempie immediatamente la barra
+        }
+
         function startProgressBar() {
             clearInterval(timerInterval);
             timerInterval = setInterval(() => {
-                progressBarWidth -= 10; // Diminuisce la larghezza della barra
+                progressBarWidth -= (100 / operationTime); // Diminuisce la larghezza della barra
                 document.getElementById('progress').style.width = progressBarWidth + '%';
                 if (progressBarWidth <= 0) {
                     clearInterval(timerInterval);
+                    endGame();
                 }
             }, 1000); // Aggiorna ogni secondo
         }
 
         function endGame() {
             clearInterval(timerInterval);
+            clearInterval(timeInterval); // Stop changing operations
             document.getElementById('operation').textContent = ''; // Nasconde l'ultima operazione
             document.getElementById('resultsButton').style.display = 'block'; // Mostra il pulsante risultati
         }
@@ -128,13 +160,24 @@
             document.getElementById('operation').textContent = '';
             document.getElementById('resultsButton').style.display = 'none'; // Nasconde il pulsante risultati
             document.getElementById('squaresContainer').innerHTML = ''; // Resetta i quadratini
+
+            // Crea i quadratini blu
             for (let i = 0; i < maxOperations; i++) {
                 const square = document.createElement('div');
                 square.className = 'square';
                 document.getElementById('squaresContainer').appendChild(square);
             }
-            displayOperation(); // Inizia a mostrare le operazioni
+
+            // Inizia a mostrare le operazioni
+            displayOperation();
             document.getElementById('startButton').style.display = 'none'; // Nasconde il pulsante "Inizia"
+
+            // Inizia a cambiare le operazioni a intervalli regolari
+            timeInterval = setInterval(() => {
+                if (currentOperationIndex < maxOperations) {
+                    displayOperation();
+                }
+            }, operationTime * 1000); // Cambia operazione ogni X secondi
         });
 
         document.getElementById('resultsButton').addEventListener('click', function() {
@@ -145,6 +188,7 @@
             document.getElementById('results').innerHTML = resultsText;
             document.getElementById('results').style.display = 'block'; // Mostra i risultati
         });
+
     </script>
 
 </body>
