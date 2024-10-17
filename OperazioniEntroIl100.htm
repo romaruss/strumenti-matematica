@@ -137,7 +137,7 @@
         function startProgressBar() {
             clearInterval(timerInterval);
             timerInterval = setInterval(() => {
-                progressBarWidth -= (100 / operationTime); // Diminuisce la larghezza della barra
+                progressBarWidth -= (100 / (operationTime-1)); // Diminuisce la larghezza della barra
                 document.getElementById('progress').style.width = progressBarWidth + '%';
                 if (progressBarWidth <= 0) {
                     clearInterval(timerInterval);
