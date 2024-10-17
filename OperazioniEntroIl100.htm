@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operazioni entro il 100</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+        }
+        #operation {
+            font-size: 3em;
+            margin: 20px;
+        }
+        #startButton, #resultsButton {
+            padding: 10px 20px;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+        #results {
+            margin-top: 20px;
+            display: none;
+        }
+        #progressBar {
+            width: 100%;
+            height: 30px;
+            background-color: #ddd;
+            margin: 20px 0;
+        }
+        #progress {
+            height: 100%;
+            width: 100%;
+            background-color: #4caf50; /* Colore verde */
+            transition: width 1s; /* Transizione per la barra */
+        }
+        .square {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background-color: blue;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Operazioni entro il 100</h1>
+    <button id="startButton">Inizia</button>
+    <div id="operation"></div>
+    <div id="progressBar"><div id="progress"></div></div>
+    <div id="squaresContainer"></div>
+    <button id="resultsButton" style="display: none;">Risultati</button>
+    <div id="results"></div>
+
+    <script>
+        let currentOperationIndex = 0;
+        const operations = [];
+        const results = [];
+        const maxOperations = 10;
+        let timerInterval;
+        let progressBarWidth = 150;
+
+        function generateOperation() {
+            let operation = '';
+            let result = 0;
+            const isAddition = Math.random() < 0.5; // 50% chance for addition or subtraction
+            
+            if (isAddition) {
+                const num1 = Math.floor(Math.random() * 101); // 0 to 100
+                const num2 = Math.floor(Math.random() * (101 - num1)); // 0 to (100 - num1)
+                operation = `${num1} + ${num2}`;
+                result = num1 + num2;
+            } else {
+                const num1 = Math.floor(Math.random() * 101); // 0 to 100
+                const num2 = Math.floor(Math.random() * (num1 + 1)); // 0 to num1
+                operation = `${num1} - ${num2}`;
+                result = num1 - num2;
+            }
+
+            operations.push(operation);
+            results.push(result);
+        }
+
+        function displayOperation() {
+            if (currentOperationIndex < maxOperations) {
+                generateOperation();
+                document.getElementById('operation').textContent = operations[currentOperationIndex];
+                document.getElementById('squaresContainer').children[currentOperationIndex].style.backgroundColor = 'red'; // Colora il quadratino
+                currentOperationIndex++;
+                setTimeout(displayOperation, 15000); // Cambia operazione ogni 10 secondi
+                progressBarWidth = 100; // Resetta la larghezza della barra
+                document.getElementById('progress').style.width = '100%'; // Resetta la barra
+                startProgressBar(); // Avvia la barra di avanzamento
+            } else {
+                endGame();
+            }
+        }
+
+        function startProgressBar() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                progressBarWidth -= 10; // Diminuisce la larghezza della barra
+                document.getElementById('progress').style.width = progressBarWidth + '%';
+                if (progressBarWidth <= 0) {
+                    clearInterval(timerInterval);
+                }
+            }, 1000); // Aggiorna ogni secondo
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            document.getElementById('operation').textContent = ''; // Nasconde l'ultima operazione
+            document.getElementById('resultsButton').style.display = 'block'; // Mostra il pulsante risultati
+        }
+
+        document.getElementById('startButton').addEventListener('click', function() {
+            operations.length = 0; // Resetta le operazioni
+            results.length = 0; // Resetta i risultati
+            currentOperationIndex = 0; // Resetta l'indice
+            document.getElementById('operation').textContent = '';
+            document.getElementById('resultsButton').style.display = 'none'; // Nasconde il pulsante risultati
+            document.getElementById('squaresContainer').innerHTML = ''; // Resetta i quadratini
+            for (let i = 0; i < maxOperations; i++) {
+                const square = document.createElement('div');
+                square.className = 'square';
+                document.getElementById('squaresContainer').appendChild(square);
+            }
+            displayOperation(); // Inizia a mostrare le operazioni
+            document.getElementById('startButton').style.display = 'none'; // Nasconde il pulsante "Inizia"
+        });
+
+        document.getElementById('resultsButton').addEventListener('click', function() {
+            let resultsText = '';
+            for (let i = 0; i < operations.length; i++) {
+                resultsText += `${operations[i]} = ${results[i]}<br>`;
+            }
+            document.getElementById('results').innerHTML = resultsText;
+            document.getElementById('results').style.display = 'block'; // Mostra i risultati
+        });
+    </script>
+
+</body>
+</html>
