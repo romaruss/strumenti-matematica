@@ -19,7 +19,7 @@
             font-size: 3em;
             margin: 20px;
         }
-        #startButton, #resultsButton {
+        #startButton, #resultsButton, #restartButton {
             padding: 10px 20px;
             font-size: 1.5em;
             cursor: pointer;
@@ -74,6 +74,7 @@
     <div id="progressBar"><div id="progress"></div></div>
     <div id="squaresContainer"></div>
     <button id="resultsButton" style="display: none;">Risultati</button>
+    <button id="restartButton" style="display: none;">Ricomincia</button>
     <div id="results"></div>
 
     <script>
@@ -82,14 +83,22 @@
         const results = [];
         const maxOperations = 10;
         let timerInterval;
-        let progressBarWidth = 100;
         let operationTime = 10; // Default time in seconds
         let timeInterval; // Variable to hold the interval for changing operations
 
-        // Update the displayed value of the slider
+        // Set slider value from local storage if it exists
+        const savedTime = localStorage.getItem('operationTime');
+        if (savedTime) {
+            operationTime = savedTime;
+            document.getElementById('timeSlider').value = operationTime;
+            document.getElementById('timeValue').textContent = operationTime;
+        }
+
+        // Update the displayed value of the slider and save it
         document.getElementById('timeSlider').addEventListener('input', function() {
             operationTime = this.value;
             document.getElementById('timeValue').textContent = operationTime;
+            localStorage.setItem('operationTime', operationTime); // Save to local storage
         });
 
         function generateOperation() {
@@ -101,13 +110,13 @@
             const canSubtract = !onlyAddition; // Can do subtraction if not limited
             
             if (canAdd && (Math.random() < 0.5 || !canSubtract)) {
-                const num1 = Math.floor(Math.random() * 101); // 0 to 100
-                const num2 = Math.floor(Math.random() * (101 - num1)); // 0 to (100 - num1)
+                const num1 = Math.floor(Math.random() * 99) + 1; // 1 to 99
+                const num2 = Math.floor(Math.random() * (100 - num1)) + 1; // 1 to (100 - num1)
                 operation = `${num1} + ${num2}`;
                 result = num1 + num2;
             } else if (canSubtract) {
-                const num1 = Math.floor(Math.random() * 101); // 0 to 100
-                const num2 = Math.floor(Math.random() * (num1 + 1)); // 0 to num1
+                const num1 = Math.floor(Math.random() * 99) + 1; // 1 to 99
+                const num2 = Math.floor(Math.random() * (num1)) + 1; // 1 to num1
                 operation = `${num1} - ${num2}`;
                 result = num1 - num2;
             }
@@ -130,14 +139,14 @@
         }
 
         function resetProgressBar() {
-            progressBarWidth = 100; // Resetta la larghezza della barra
             document.getElementById('progress').style.width = '100%'; // Riempie immediatamente la barra
         }
 
         function startProgressBar() {
+            let progressBarWidth = 100; // Resetta la larghezza della barra
             clearInterval(timerInterval);
             timerInterval = setInterval(() => {
-                progressBarWidth -= (100 / (operationTime-1)); // Diminuisce la larghezza della barra
+                progressBarWidth -= (100 / (operationTime+1)); // Diminuisce la larghezza della barra
                 document.getElementById('progress').style.width = progressBarWidth + '%';
                 if (progressBarWidth <= 0) {
                     clearInterval(timerInterval);
@@ -151,6 +160,10 @@
             clearInterval(timeInterval); // Stop changing operations
             document.getElementById('operation').textContent = ''; // Nasconde l'ultima operazione
             document.getElementById('resultsButton').style.display = 'block'; // Mostra il pulsante risultati
+            document.getElementById('startButton').style.display = 'none'; // Nasconde il pulsante "Inizia"
+            document.getElementById('timeSlider').disabled = true; // Disabilita lo slider
+            document.getElementById('additionCheck').disabled = true; // Disabilita i checkbox
+            document.getElementById('subtractionCheck').disabled = true; // Disabilita i checkbox
         }
 
         document.getElementById('startButton').addEventListener('click', function() {
@@ -187,6 +200,25 @@
             }
             document.getElementById('results').innerHTML = resultsText;
             document.getElementById('results').style.display = 'block'; // Mostra i risultati
+
+            // Nasconde il pulsante risultati e mostra il pulsante ricomincia
+            document.getElementById('resultsButton').style.display = 'none'; // Nasconde il pulsante risultati
+            document.getElementById('restartButton').style.display = 'block'; // Mostra il pulsante ricomincia
+        });
+
+        document.getElementById('restartButton').addEventListener('click', function() {
+            // Riavvia il gioco
+            currentOperationIndex = 0; // Resetta l'indice
+            operations.length = 0; // Resetta le operazioni
+            results.length = 0; // Resetta i risultati
+            document.getElementById('results').style.display = 'none'; // Nasconde i risultati
+            document.getElementById('restartButton').style.display = 'none'; // Nasconde il pulsante ricomincia
+            document.getElementById('squaresContainer').innerHTML = ''; // Resetta i quadratini
+            document.getElementById('startButton').style.display = 'block'; // Mostra il pulsante "Inizia"
+            document.getElementById('operation').textContent = ''; // Nasconde l'operazione
+            document.getElementById('timeSlider').disabled = false; // Riabilita lo slider
+            document.getElementById('additionCheck').disabled = false; // Riabilita i checkbox
+            document.getElementById('subtractionCheck').disabled = false; // Riabilita i checkbox
         });
 
     </script>
