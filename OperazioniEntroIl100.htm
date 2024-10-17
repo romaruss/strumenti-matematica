@@ -146,11 +146,11 @@
             let progressBarWidth = 100; // Resetta la larghezza della barra
             clearInterval(timerInterval);
             timerInterval = setInterval(() => {
-                progressBarWidth -= (100 / (operationTime+1)); // Diminuisce la larghezza della barra
+                progressBarWidth -= (100 / (operationTime-1)); // Diminuisce la larghezza della barra
                 document.getElementById('progress').style.width = progressBarWidth + '%';
                 if (progressBarWidth <= 0) {
                     clearInterval(timerInterval);
-                    endGame();
+                    // Non chiamiamo endGame qui
                 }
             }, 1000); // Aggiorna ogni secondo
         }
@@ -161,9 +161,6 @@
             document.getElementById('operation').textContent = ''; // Nasconde l'ultima operazione
             document.getElementById('resultsButton').style.display = 'block'; // Mostra il pulsante risultati
             document.getElementById('startButton').style.display = 'none'; // Nasconde il pulsante "Inizia"
-            document.getElementById('timeSlider').disabled = true; // Disabilita lo slider
-            document.getElementById('additionCheck').disabled = true; // Disabilita i checkbox
-            document.getElementById('subtractionCheck').disabled = true; // Disabilita i checkbox
         }
 
         document.getElementById('startButton').addEventListener('click', function() {
@@ -185,29 +182,30 @@
             displayOperation();
             document.getElementById('startButton').style.display = 'none'; // Nasconde il pulsante "Inizia"
 
-            // Inizia a cambiare le operazioni a intervalli regolari
-            timeInterval = setInterval(() => {
-                if (currentOperationIndex < maxOperations) {
-                    displayOperation();
-                }
-            }, operationTime * 1000); // Cambia operazione ogni X secondi
+            // Disabilita i controlli di configurazione durante il gioco
+            document.getElementById('timeSlider').disabled = true; // Disabilita lo slider
+            document.getElementById('additionCheck').disabled = true; // Disabilita i checkbox
+            document.getElementById('subtractionCheck').disabled = true; // Disabilita i checkbox
+
+            // Inizia a cambiare operazioni ogni X secondi
+            timeInterval = setInterval(displayOperation, (operationTime * 1000)); // Cambia operazione ogni X secondi
+            startProgressBar(); // Inizia la barra di avanzamento
         });
 
         document.getElementById('resultsButton').addEventListener('click', function() {
-            let resultsText = '';
-            for (let i = 0; i < operations.length; i++) {
-                resultsText += `${operations[i]} = ${results[i]}<br>`;
+            let resultsText = '<h2>Risultati</h2><ul>';
+            for (let i = 0; i < maxOperations; i++) {
+                resultsText += `<li>${operations[i]} = ${results[i]}</li>`;
             }
+            resultsText += '</ul>';
             document.getElementById('results').innerHTML = resultsText;
             document.getElementById('results').style.display = 'block'; // Mostra i risultati
-
-            // Nasconde il pulsante risultati e mostra il pulsante ricomincia
-            document.getElementById('resultsButton').style.display = 'none'; // Nasconde il pulsante risultati
-            document.getElementById('restartButton').style.display = 'block'; // Mostra il pulsante ricomincia
+            // Nasconde il pulsante dei risultati e mostra il pulsante di ricominciare
+            document.getElementById('resultsButton').style.display = 'none';
+            document.getElementById('restartButton').style.display = 'block'; // Mostra il pulsante "Ricomincia"
         });
 
         document.getElementById('restartButton').addEventListener('click', function() {
-            // Riavvia il gioco
             currentOperationIndex = 0; // Resetta l'indice
             operations.length = 0; // Resetta le operazioni
             results.length = 0; // Resetta i risultati
