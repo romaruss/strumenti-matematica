@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gioco dei Pallini</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            display: flex;
+        }
+
+        #left-panel {
+            margin-right: 50px;
+        }
+
+        #startButton, #restartButton {
+            display: block;
+            width: 100px;
+            height: 40px;
+            font-size: 1.2em;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: background-color 0.3s;
+        }
+
+        #startButton:hover, #restartButton:hover {
+            background-color: #45a049;
+        }
+
+        #results {
+            font-size: 1.1em;
+        }
+
+        #grid {
+            display: grid;
+            grid-template-columns: repeat(5, 20px) 50px repeat(5, 20px); /* Spazio tra i gruppi di 5 pallini */
+            grid-template-rows: repeat(5, 20px) 50px repeat(5, 20px);    /* Spazio tra le due sezioni di righe */
+            grid-gap: 10px;
+        }
+
+        .dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: green;
+        }
+
+        .red {
+            background-color: red;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="left-panel">
+        <button id="startButton">Inizia</button>
+        <button id="restartButton" style="display: none;">Ricomincia</button>
+        <div id="results"></div>
+    </div>
+
+    <div id="grid"></div>
+</div>
+
+<script>
+    const grid = document.getElementById('grid');
+    const startButton = document.getElementById('startButton');
+    const restartButton = document.getElementById('restartButton');
+    const resultsDiv = document.getElementById('results');
+    let redDots = []; // Per salvare la lista di pallini diventati rossi
+    let gameInterval;
+    let redCount = 0;
+
+    // Crea la griglia di pallini verdi
+    function createGrid() {
+        for (let row = 0; row < 10; row++) {
+            for (let col = 1; col <= 10; col++) {
+                const dot = document.createElement('div');
+                dot.classList.add('dot');
+                dot.dataset.position = `${row}${col}`; // Salva la posizione del pallino
+                grid.appendChild(dot);
+            }
+        }
+    }
+
+    function getRandomDot() {
+        const allDots = document.querySelectorAll('.dot');
+        let randomDot;
+
+        do {
+            randomDot = allDots[Math.floor(Math.random() * allDots.length)];
+        } while (redDots.includes(randomDot)); // Evita che lo stesso pallino venga selezionato più volte
+
+        return randomDot;
+    }
+
+    function startGame() {
+        redCount = 0;
+        redDots = [];
+        resultsDiv.innerHTML = ''; // Reset del pannello risultati
+
+        gameInterval = setInterval(() => {
+            if (redCount < 10) {
+                const randomDot = getRandomDot();
+                randomDot.classList.add('red');
+                redDots.push(randomDot);
+
+                const position = randomDot.dataset.position;
+                resultsDiv.innerHTML += `Pallino: ${position[0]}${position[1]}<br>`;
+                
+                // Dopo 10 secondi il pallino torna verde
+                setTimeout(() => {
+                    randomDot.classList.remove('red');
+                }, 10000);
+
+                redCount++;
+            } else {
+                endGame();
+            }
+        }, 10000);
+    }
+
+    function endGame() {
+        clearInterval(gameInterval);
+        
+        // Fai diventare rossi tutti i pallini che sono stati selezionati
+        redDots.forEach(dot => dot.classList.add('red'));
+        
+        // Mostra il tasto "ricomincia"
+        restartButton.style.display = 'block';
+    }
+
+    function restartGame() {
+        const allDots = document.querySelectorAll('.dot');
+        allDots.forEach(dot => dot.classList.remove('red')); // Rimuove il colore rosso da tutti i pallini
+        restartButton.style.display = 'none'; // Nasconde il pulsante ricomincia
+        startButton.style.display = 'block'; // Mostra di nuovo il pulsante "Inizia"
+    }
+
+    // Event listeners
+    startButton.addEventListener('click', () => {
+        startButton.style.display = 'none'; // Nasconde il pulsante "Inizia"
+        startGame();
+    });
+
+    restartButton.addEventListener('click', restartGame);
+
+    // Crea la griglia alla partenza
+    createGrid();
+</script>
+
+</body>
+</html>
