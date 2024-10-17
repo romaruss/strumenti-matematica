@@ -19,7 +19,7 @@
         }
 
         #left-panel {
-            margin-right: 50px;
+            margin-right: 100px; /* Spazio per evitare la sovrapposizione */
             position: relative;
         }
 
@@ -50,15 +50,15 @@
 
         #grid {
             display: grid;
-            grid-template-columns: repeat(4, 20px) 35px repeat(5, 20px); /* Spazio tra i gruppi di pallini */
-            grid-template-rows: repeat(4, 20px) 35px repeat(5, 20px);    /* Spazio tra le due sezioni di righe */
+            grid-template-columns: repeat(4, 30px) 45px repeat(5, 30px); /* Dimensione aumentata 1,5x */
+            grid-template-rows: repeat(4, 30px) 45px repeat(5, 30px);    /* Spazio tra le due sezioni di righe */
             grid-gap: 10px;
             position: relative;
         }
 
         .dot {
-            width: 20px;
-            height: 20px;
+            width: 30px;  /* Dimensione aumentata 1,5x */
+            height: 30px; /* Dimensione aumentata 1,5x */
             border-radius: 50%;
             background-color: green;
         }
@@ -79,6 +79,23 @@
             height: 100%;
             background-color: green;
             width: 100%;
+        }
+
+        #squareTracker {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .square {
+            width: 20px;
+            height: 20px;
+            background-color: blue;
+            margin: 0 5px;
+        }
+
+        .square.red {
+            background-color: red;
         }
 
         #slider-container {
@@ -108,6 +125,19 @@
         <div id="timeBar">
             <div id="timeBarFill"></div>
         </div>
+        <div id="squareTracker">
+            <!-- Linea di 10 quadratini -->
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+        </div>
     </div>
 </div>
 
@@ -124,6 +154,7 @@
     const timeBarFill = document.getElementById('timeBarFill');
     const timeSlider = document.getElementById('timeSlider');
     const timeValue = document.getElementById('timeValue');
+    const squares = document.querySelectorAll('.square');
     let redDots = []; // Per salvare la lista di pallini diventati rossi
     let gameInterval;
     let redCount = 0;
@@ -171,6 +202,9 @@
         resultsDiv.innerHTML = ''; // Reset del pannello risultati
         resultsDiv.style.display = "none";
 
+        // Disabilita la configurazione
+        timeSlider.disabled = true;
+
         gameInterval = setInterval(() => {
             if (redCount < 10) {
                 const randomDot = getRandomDot();
@@ -187,6 +221,8 @@
                     randomDot.classList.remove('red');
                 }, gameDuration);
 
+                // Colora i quadratini blu in rosso man mano
+                squares[redCount].classList.add('red');
                 redCount++;
             } else {
                 endGame();
@@ -213,6 +249,12 @@
         allDots.forEach(dot => dot.classList.remove('red')); // Rimuove il colore rosso da tutti i pallini
         restartButton.style.display = 'none'; // Nasconde il pulsante ricomincia
         startButton.style.display = 'block'; // Mostra di nuovo il pulsante "Inizia"
+
+        // Ripristina la configurazione
+        timeSlider.disabled = false;
+
+        // Reset quadratini
+        squares.forEach(square => square.classList.remove('red'));
     }
 
     // Event listeners
