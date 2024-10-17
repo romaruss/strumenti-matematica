@@ -20,6 +20,7 @@
 
         #left-panel {
             margin-right: 50px;
+            position: relative;
         }
 
         #startButton, #restartButton {
@@ -33,6 +34,7 @@
             cursor: pointer;
             margin-bottom: 20px;
             transition: background-color 0.3s;
+            position: absolute;
         }
 
         #startButton:hover, #restartButton:hover {
@@ -41,13 +43,17 @@
 
         #results {
             font-size: 1.1em;
+            margin-top: 70px;
+            position: absolute;
+            top: 100px;
         }
 
         #grid {
             display: grid;
-            grid-template-columns: repeat(5, 20px) 50px repeat(5, 20px); /* Spazio tra i gruppi di 5 pallini */
-            grid-template-rows: repeat(5, 20px) 50px repeat(5, 20px);    /* Spazio tra le due sezioni di righe */
+            grid-template-columns: repeat(4, 20px) 35px repeat(5, 20px); /* Spazio tra i gruppi di pallini */
+            grid-template-rows: repeat(4, 20px) 35px repeat(5, 20px);    /* Spazio tra le due sezioni di righe */
             grid-gap: 10px;
+            position: relative;
         }
 
         .dot {
@@ -61,6 +67,31 @@
             background-color: red;
         }
 
+        #timeBar {
+            width: 100%;
+            height: 20px;
+            background-color: lightgray;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        #timeBarFill {
+            height: 100%;
+            background-color: green;
+            width: 100%;
+        }
+
+        #slider-container {
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 10px;
+        }
+
+        #slider-label {
+            margin-right: 10px;
+        }
+
     </style>
 </head>
 <body>
@@ -69,10 +100,20 @@
     <div id="left-panel">
         <button id="startButton">Inizia</button>
         <button id="restartButton" style="display: none;">Ricomincia</button>
-        <div id="results"></div>
+        <div id="results" style="display:none;"></div>
     </div>
 
-    <div id="grid"></div>
+    <div>
+        <div id="grid"></div>
+        <div id="timeBar">
+            <div id="timeBarFill"></div>
+        </div>
+    </div>
+</div>
+
+<div id="slider-container">
+    <label id="slider-label">Tempo pallini rossi: <span id="timeValue">10</span>s</label>
+    <input type="range" id="timeSlider" min="5" max="30" value="10">
 </div>
 
 <script>
@@ -80,9 +121,14 @@
     const startButton = document.getElementById('startButton');
     const restartButton = document.getElementById('restartButton');
     const resultsDiv = document.getElementById('results');
+    const timeBarFill = document.getElementById('timeBarFill');
+    const timeSlider = document.getElementById('timeSlider');
+    const timeValue = document.getElementById('timeValue');
     let redDots = []; // Per salvare la lista di pallini diventati rossi
     let gameInterval;
     let redCount = 0;
+    let gameDuration = 10000; // Durata del rosso inizialmente
+    let selectedDots = []; // Pallini selezionati durante il gioco
 
     // Crea la griglia di pallini verdi
     function createGrid() {
@@ -107,10 +153,23 @@
         return randomDot;
     }
 
+    function updateBar(duration) {
+        let width = 100;
+        const interval = setInterval(() => {
+            width -= (100 / (duration / 1000));
+            timeBarFill.style.width = width + '%';
+            if (width <= 0) {
+                clearInterval(interval);
+            }
+        }, 1000);
+    }
+
     function startGame() {
         redCount = 0;
         redDots = [];
+        selectedDots = [];
         resultsDiv.innerHTML = ''; // Reset del pannello risultati
+        resultsDiv.style.display = "none";
 
         gameInterval = setInterval(() => {
             if (redCount < 10) {
@@ -119,26 +178,32 @@
                 redDots.push(randomDot);
 
                 const position = randomDot.dataset.position;
-                resultsDiv.innerHTML += `Pallino: ${position[0]}${position[1]}<br>`;
-                
-                // Dopo 10 secondi il pallino torna verde
+                selectedDots.push(position); // Salva la posizione del pallino
+
+                updateBar(gameDuration);
+
+                // Dopo il tempo selezionato il pallino torna verde
                 setTimeout(() => {
                     randomDot.classList.remove('red');
-                }, 10000);
+                }, gameDuration);
 
                 redCount++;
             } else {
                 endGame();
             }
-        }, 10000);
+        }, gameDuration);
     }
 
     function endGame() {
         clearInterval(gameInterval);
-        
+
         // Fai diventare rossi tutti i pallini che sono stati selezionati
         redDots.forEach(dot => dot.classList.add('red'));
-        
+
+        // Mostra i risultati
+        resultsDiv.innerHTML = selectedDots.map((dot, index) => `Pallino ${index + 1}: ${dot}`).join('<br>');
+        resultsDiv.style.display = 'block';
+
         // Mostra il tasto "ricomincia"
         restartButton.style.display = 'block';
     }
@@ -157,6 +222,12 @@
     });
 
     restartButton.addEventListener('click', restartGame);
+
+    // Aggiorna il tempo di permanenza in rosso del pallino
+    timeSlider.addEventListener('input', () => {
+        gameDuration = timeSlider.value * 1000;
+        timeValue.textContent = timeSlider.value;
+    });
 
     // Crea la griglia alla partenza
     createGrid();
