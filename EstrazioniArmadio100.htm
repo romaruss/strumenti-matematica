@@ -19,7 +19,8 @@
         }
 
         #left-panel {
-            margin-right: 100px; /* Spazio per evitare la sovrapposizione */
+            margin-right: 100px; /* Spazio tra pulsanti e griglia aumentato a 100px */
+            width: 200px; /* Larghezza aumentata per evitare che il testo vada a capo */
             position: relative;
         }
 
@@ -46,6 +47,7 @@
             margin-top: 70px;
             position: absolute;
             top: 100px;
+            white-space: nowrap; /* Impedisce al testo di andare a capo */
         }
 
         #grid {
@@ -61,6 +63,11 @@
             height: 30px; /* Dimensione aumentata 1,5x */
             border-radius: 50%;
             background-color: green;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.9em;
+            color: white;
         }
 
         .red {
@@ -184,6 +191,15 @@
         return randomDot;
     }
 
+    function calculateDotNumber(row, col) {
+        // Se le unità sono 10, considera 0 e aumenta la decina
+        if (col === 10) {
+            row += 1;
+            col = 0;
+        }
+        return `${row}${col}`;
+    }
+
     function updateBar(duration) {
         let width = 100;
         const interval = setInterval(() => {
@@ -211,7 +227,11 @@
                 randomDot.classList.add('red');
                 redDots.push(randomDot);
 
-                const position = randomDot.dataset.position;
+                const row = Math.floor(randomDot.dataset.position / 10);
+                const col = randomDot.dataset.position % 10;
+                const position = calculateDotNumber(row, col); // Calcola il numero del pallino
+
+                randomDot.textContent = position; // Mostra il numero nel pallino
                 selectedDots.push(position); // Salva la posizione del pallino
 
                 updateBar(gameDuration);
@@ -219,6 +239,7 @@
                 // Dopo il tempo selezionato il pallino torna verde
                 setTimeout(() => {
                     randomDot.classList.remove('red');
+                    randomDot.textContent = ''; // Rimuove il numero dal pallino
                 }, gameDuration);
 
                 // Colora i quadratini blu in rosso man mano
@@ -244,26 +265,24 @@
         restartButton.style.display = 'block';
     }
 
-    function restartGame() {
-        const allDots = document.querySelectorAll('.dot');
-        allDots.forEach(dot => dot.classList.remove('red')); // Rimuove il colore rosso da tutti i pallini
-        restartButton.style.display = 'none'; // Nasconde il pulsante ricomincia
-        startButton.style.display = 'block'; // Mostra di nuovo il pulsante "Inizia"
-
-        // Ripristina la configurazione
-        timeSlider.disabled = false;
-
-        // Reset quadratini
-        squares.forEach(square => square.classList.remove('red'));
-    }
-
-    // Event listeners
+    // Inizia il gioco quando viene premuto il pulsante
     startButton.addEventListener('click', () => {
-        startButton.style.display = 'none'; // Nasconde il pulsante "Inizia"
+        startButton.style.display = 'none'; // Nasconde il pulsante di inizio
         startGame();
     });
 
-    restartButton.addEventListener('click', restartGame);
+    // Ricomincia il gioco
+    restartButton.addEventListener('click', () => {
+        restartButton.style.display = 'none';
+        squares.forEach(square => square.classList.remove('red')); // Reset quadratini blu
+        const allDots = document.querySelectorAll('.dot');
+        allDots.forEach(dot => {
+            dot.classList.remove('red');
+            dot.textContent = ''; // Rimuove numeri dai pallini
+        });
+        timeSlider.disabled = false; // Riabilita la configurazione
+        startGame();
+    });
 
     // Aggiorna il tempo di permanenza in rosso del pallino
     timeSlider.addEventListener('input', () => {
