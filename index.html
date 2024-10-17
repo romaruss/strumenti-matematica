@@ -1,103 +1,56 @@
 <!DOCTYPE html>
 <html lang="it">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Operazioni entro il 100</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagine di esercizi</title>
     <style>
-      body {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        font-family: Arial, sans-serif;
-        background-color: #f0f0f0;
-        text-align: center;
-      }
-      #operation {
-        font-size: 3em;
-        margin: 20px;
-      }
-      #startButton,
-      #resultsButton {
-        padding: 10px 20px;
-        font-size: 1.5em;
-        cursor: pointer;
-      }
-      #results {
-        margin-top: 20px;
-        display: none;
-      }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        #button-container {
+            display: grid;
+            grid-template-columns: 8cm 8cm;
+            grid-gap: 20px;
+        }
+
+        .exercise-button {
+            width: 8cm;
+            height: 1cm;
+            font-size: 1.2em;
+            text-align: center;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .exercise-button:hover {
+            background-color: #45a049;
+        }
     </style>
-  </head>
-  <body>
-    <h1>Operazioni entro il 100</h1>
-    <button id="startButton">Inizia</button>
-    <div id="operation"></div>
-    <button id="resultsButton" style="display: none">Risultati</button>
-    <div id="results"></div>
+</head>
+<body>
 
-    <script>
-      let currentOperationIndex = 0;
-      const operations = [];
-      const results = [];
-      const maxOperations = 10;
+    <div id="button-container">
+        <button class="exercise-button" onclick="location.href='OperazioniEntroIl100.htm'">Operazioni entro il 100</button>
+        <button class="exercise-button"></button>
+        <button class="exercise-button"></button>
+        <button class="exercise-button"></button>
+        <button class="exercise-button"></button>
+        <button class="exercise-button"></button>
+        <button class="exercise-button"></button>
+        <button class="exercise-button"></button>
+        <button class="exercise-button"></button>
+        <button class="exercise-button"></button>
+    </div>
 
-      function generateOperation() {
-        let operation = "";
-        let result = 0;
-        const isAddition = Math.random() < 0.5; // 50% chance for addition or subtraction
-
-        if (isAddition) {
-          const num1 = Math.floor(Math.random() * 101); // 0 to 100
-          const num2 = Math.floor(Math.random() * (101 - num1)); // 0 to (100 - num1)
-          operation = `${num1} + ${num2}`;
-          result = num1 + num2;
-        } else {
-          const num1 = Math.floor(Math.random() * 101); // 0 to 100
-          const num2 = Math.floor(Math.random() * (num1 + 1)); // 0 to num1
-          operation = `${num1} - ${num2}`;
-          result = num1 - num2;
-        }
-
-        operations.push(operation);
-        results.push(result);
-      }
-
-      function displayOperation() {
-        if (currentOperationIndex < maxOperations) {
-          generateOperation();
-          document.getElementById("operation").textContent =
-            operations[currentOperationIndex];
-          currentOperationIndex++;
-          setTimeout(displayOperation, 10000); // Cambia operazione ogni 10 secondi
-        } else {
-          document.getElementById("resultsButton").style.display = "block";
-        }
-      }
-
-      document
-        .getElementById("startButton")
-        .addEventListener("click", function () {
-          operations.length = 0; // Resetta le operazioni
-          results.length = 0; // Resetta i risultati
-          currentOperationIndex = 0; // Resetta l'indice
-          document.getElementById("operation").textContent = "";
-          document.getElementById("resultsButton").style.display = "none"; // Nasconde il pulsante risultati
-          displayOperation(); // Inizia a mostrare le operazioni
-        });
-
-      document
-        .getElementById("resultsButton")
-        .addEventListener("click", function () {
-          let resultsText = "";
-          for (let i = 0; i < operations.length; i++) {
-            resultsText += `${operations[i]} = ${results[i]}<br>`;
-          }
-          document.getElementById("results").innerHTML = resultsText;
-          document.getElementById("results").style.display = "block"; // Mostra i risultati
-        });
-    </script>
-  </body>
+</body>
 </html>
