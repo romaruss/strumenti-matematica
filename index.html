@@ -1,72 +1,103 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
   <head>
-    <!-- 
-      This is an HTML comment
-      You can write text in a comment and the content won't be visible in the page
-    -->
-
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" href="https://glitch.com/favicon.ico" />
-
-    <!--
-      This is the page head - it contains info the browser uses
-      Like the title, which appears on the browser tab but not inside the page
-      Further down you'll see the content that displays in the page
-    -->
-    <title>Hello World!</title>
-
-    <!-- The website stylesheet -->
-    <link rel="stylesheet" href="/style.css" />
-
-    <!-- The website JavaScript file -->
-    <script src="/script.js" defer></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Operazioni entro il 100</title>
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        text-align: center;
+      }
+      #operation {
+        font-size: 3em;
+        margin: 20px;
+      }
+      #startButton,
+      #resultsButton {
+        padding: 10px 20px;
+        font-size: 1.5em;
+        cursor: pointer;
+      }
+      #results {
+        margin-top: 20px;
+        display: none;
+      }
+    </style>
   </head>
   <body>
-    <!--
-      The body includes the content you see in the page
-      Each element is defined using tags, like this <div></div>
-      The attributes like class="wrapper" let us style elements in the CSS
-    -->
-    <div class="wrapper">
-      <div class="content" role="main">
-        <h1 class="title">Hello World!</h1>
-        <img
-          src="https://cdn.glitch.com/a9975ea6-8949-4bab-addb-8a95021dc2da%2Fillustration.svg?v=1618177344016"
-          class="illustration"
-          alt="Editor illustration"
-          title="Click the image!"
-        />
-        <div class="instructions">
-          <h2>Using this project</h2>
-          <p>
-            This is the Glitch <strong>Hello Website</strong> project. You can
-            use it to build your own site. Check out the code in the editor and open
-            the <span class="fileopener" data-file="TODO.md" data-line="0"
-              >TODO</span> for next steps!
-          </p>
-          <!--  🚧 TODO: ADD BUTTON HERE -->
+    <h1>Operazioni entro il 100</h1>
+    <button id="startButton">Inizia</button>
+    <div id="operation"></div>
+    <button id="resultsButton" style="display: none">Risultati</button>
+    <div id="results"></div>
 
-          <!-- Once you've added the button from TODO.md, click it in the page -->
-          <!-- Check out the function in script.js to see how it works -->
-        </div>
-      </div>
-    </div>
-    <!-- The footer holds our remix button — you can keep or delete it ✂ -->
-    <footer class="footer">
-      <div class="links"></div>
-      <a
-        class="btn--remix"
-        target="_top"
-        href="https://glitch.com/edit/#!/remix/glitch-hello-website"
-      >
-        <img
-          src="https://cdn.glitch.com/605e2a51-d45f-4d87-a285-9410ad350515%2FLogo_Color.svg?v=1618199565140"
-          alt=""
-        />
-        Remix on Glitch
-      </a>
-    </footer>
+    <script>
+      let currentOperationIndex = 0;
+      const operations = [];
+      const results = [];
+      const maxOperations = 10;
+
+      function generateOperation() {
+        let operation = "";
+        let result = 0;
+        const isAddition = Math.random() < 0.5; // 50% chance for addition or subtraction
+
+        if (isAddition) {
+          const num1 = Math.floor(Math.random() * 101); // 0 to 100
+          const num2 = Math.floor(Math.random() * (101 - num1)); // 0 to (100 - num1)
+          operation = `${num1} + ${num2}`;
+          result = num1 + num2;
+        } else {
+          const num1 = Math.floor(Math.random() * 101); // 0 to 100
+          const num2 = Math.floor(Math.random() * (num1 + 1)); // 0 to num1
+          operation = `${num1} - ${num2}`;
+          result = num1 - num2;
+        }
+
+        operations.push(operation);
+        results.push(result);
+      }
+
+      function displayOperation() {
+        if (currentOperationIndex < maxOperations) {
+          generateOperation();
+          document.getElementById("operation").textContent =
+            operations[currentOperationIndex];
+          currentOperationIndex++;
+          setTimeout(displayOperation, 10000); // Cambia operazione ogni 10 secondi
+        } else {
+          document.getElementById("resultsButton").style.display = "block";
+        }
+      }
+
+      document
+        .getElementById("startButton")
+        .addEventListener("click", function () {
+          operations.length = 0; // Resetta le operazioni
+          results.length = 0; // Resetta i risultati
+          currentOperationIndex = 0; // Resetta l'indice
+          document.getElementById("operation").textContent = "";
+          document.getElementById("resultsButton").style.display = "none"; // Nasconde il pulsante risultati
+          displayOperation(); // Inizia a mostrare le operazioni
+        });
+
+      document
+        .getElementById("resultsButton")
+        .addEventListener("click", function () {
+          let resultsText = "";
+          for (let i = 0; i < operations.length; i++) {
+            resultsText += `${operations[i]} = ${results[i]}<br>`;
+          }
+          document.getElementById("results").innerHTML = resultsText;
+          document.getElementById("results").style.display = "block"; // Mostra i risultati
+        });
+    </script>
   </body>
 </html>
