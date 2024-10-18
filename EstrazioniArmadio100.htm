@@ -169,25 +169,14 @@
     let selectedDots = []; // Pallini selezionati durante il gioco
 
     // Crea la griglia di pallini verdi
-    /*function createGrid() {
-        for (let row = 0; row < 10; row++) {
-            for (let col = 1; col <= 10; col++) {
-                const dot = document.createElement('div');
-                dot.classList.add('dot');
-                dot.dataset.position = `${row}${col}`; // Salva la posizione del pallino
-                grid.appendChild(dot);
-            }
+    function createGrid() {
+        for (let position = 1; position <= 100; position++) {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            dot.dataset.position = `${position}`; // Salva la posizione del pallino
+            grid.appendChild(dot);
         }
-    }*/
-      function createGrid() {
-        for (let position = 1; position <= 100; position++) {           
-                const dot = document.createElement('div');
-                dot.classList.add('dot');
-                dot.dataset.position = `${position}`; // Salva la posizione del pallino
-                grid.appendChild(dot);
-        }
-      }
-        
+    }
 
     function getRandomDot() {
         const allDots = document.querySelectorAll('.dot');
@@ -195,19 +184,9 @@
 
         do {
             randomDot = allDots[Math.floor(Math.random() * allDots.length)];
-            
         } while (redDots.includes(randomDot)); // Evita che lo stesso pallino venga selezionato più volte
 
         return randomDot;
-    }
-
-    function calculateDotNumber(row, col) {
-        // Se le unità sono 10, considera 0 e aumenta la decina
-        if (col === 10) {
-            row += 1;
-            col = 0;
-        }
-        return `${row}${col}`;
     }
 
     function updateBar(duration) {
@@ -242,15 +221,10 @@
             randomDot.classList.add('red');
             redDots.push(randomDot);
 
-           const position = randomDot.dataset.position;
-
+            const position = randomDot.dataset.position;
             selectedDots.push(position); // Salva la posizione del pallino
-            updateBar(gameDuration);
 
-            // Dopo il tempo selezionato il pallino torna verde
-            setTimeout(() => {
-                randomDot.classList.remove('red');
-            }, gameDuration);
+            updateBar(gameDuration);
 
             // Colora i quadratini blu in rosso man mano
             squares[redCount].classList.add('red');
