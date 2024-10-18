@@ -226,6 +226,11 @@
 
             updateBar(gameDuration);
 
+            // Dopo il tempo selezionato il pallino torna verde
+            setTimeout(() => {
+                randomDot.classList.remove('red');
+            }, gameDuration);
+
             // Colora i quadratini blu in rosso man mano
             squares[redCount].classList.add('red');
             redCount++;
@@ -236,7 +241,7 @@
 
     function endGame() {
         clearInterval(gameInterval);
-
+    pausecomp(1000);
         // Fai diventare rossi tutti i pallini che sono stati selezionati e inserisci i numeri
         redDots.forEach((dot, index) => {
             dot.classList.add('red');

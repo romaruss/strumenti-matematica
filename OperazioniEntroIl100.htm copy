@@ -27,8 +27,6 @@
         #results {
             margin-top: 20px;
             display: none;
-            font-size: 1.5em; /* Aumentato il font size dei risultati */
-            text-align: left; /* Allinea il testo a sinistra */
         }
         #progressBar {
             width: 100%;
@@ -57,16 +55,6 @@
         }
         #slider {
             width: 200px;
-        }
-        #resultsTable {
-            margin-top: 20px;
-            border-collapse: collapse;
-            width: 100%;
-        }
-        #resultsTable th, #resultsTable td {
-            border: 1px solid black;
-            padding: 10px;
-            text-align: center;
         }
     </style>
 </head>
@@ -158,7 +146,7 @@
             let progressBarWidth = 100; // Resetta la larghezza della barra
             clearInterval(timerInterval);
             timerInterval = setInterval(() => {
-                progressBarWidth -= (100 / (operationTime - 1)); // Diminuisce la larghezza della barra
+                progressBarWidth -= (100 / (operationTime-1)); // Diminuisce la larghezza della barra
                 document.getElementById('progress').style.width = progressBarWidth + '%';
                 if (progressBarWidth <= 0) {
                     clearInterval(timerInterval);
@@ -205,12 +193,12 @@
         });
 
         document.getElementById('resultsButton').addEventListener('click', function() {
-            let resultsTable = '<h2>Risultati</h2><table id="resultsTable"><tr><th>Operazione</th><th>Risultato</th></tr>';
+            let resultsText = '<h2>Risultati</h2><ul>';
             for (let i = 0; i < maxOperations; i++) {
-                resultsTable += `<tr><td>${operations[i]}</td><td>${results[i]}</td></tr>`;
+                resultsText += `<li>${operations[i]} = ${results[i]}</li>`;
             }
-            resultsTable += '</table>';
-            document.getElementById('results').innerHTML = resultsTable;
+            resultsText += '</ul>';
+            document.getElementById('results').innerHTML = resultsText;
             document.getElementById('results').style.display = 'block'; // Mostra i risultati
             // Nasconde il pulsante dei risultati e mostra il pulsante di ricominciare
             document.getElementById('resultsButton').style.display = 'none';
