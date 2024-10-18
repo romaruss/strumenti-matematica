@@ -3,223 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Operazioni entro il 100</title>
+    <title>Gioco dei Pallini</title>
     <style>
         body {
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
-            text-align: center;
         }
-        #operation {
-            font-size: 3em;
-            margin: 20px;
+
+        .container {
+            display: flex;
         }
-        #startButton, #resultsButton, #restartButton {
-            padding: 10px 20px;
-            font-size: 1.5em;
+
+        #left-panel {
+            margin-right: 100px;
+            width: 200px;
+            position: relative;
+        }
+
+        #startButton, #restartButton {
+            display: block;
+            width: 100px;
+            height: 40px;
+            font-size: 1.2em;
+            background-color: #4caf50;
+            color: white;
+            border: none;
             cursor: pointer;
+            margin-bottom: 20px;
+            transition: background-color 0.3s;
+            position: absolute;
         }
+
+        #startButton:hover, #restartButton:hover {
+            background-color: #45a049;
+        }
+
         #results {
-            margin-top: 20px;
-            display: none;
+            font-size: 1.1em;
+            margin-top: 70px;
+            position: absolute;
+            top: 100px;
+            white-space: nowrap;
         }
-        #progressBar {
-            width: 100%;
-            height: 30px;
-            background-color: #ddd;
-            margin: 20px 0;
+
+        #grid {
+            display: grid;
+            grid-template-columns: repeat(4, 30px) 45px repeat(5, 30px);
+            grid-template-rows: repeat(4, 30px) 45px repeat(5, 30px);
+            grid-gap: 10px;
+            position: relative;
         }
-        #progress {
-            height: 100%;
-            width: 100%;
-            background-color: #4caf50; /* Colore verde */
-        }
-        .square {
-            display: inline-block;
+
+        .dot {
             width: 30px;
             height: 30px;
+            border-radius: 50%;
+            background-color: green;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.9em;
+            color: white;
+        }
+
+        .red {
+            background-color: red;
+        }
+
+        #timeBar {
+            width: 100%;
+            height: 20px;
+            background-color: lightgray;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        #timeBarFill {
+            height: 100%;
+            background-color: green;
+            width: 100%;
+        }
+
+        #squareTracker {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .square {
+            width: 20px;
+            height: 20px;
             background-color: blue;
-            margin: 5px;
-            transition: background-color 0.3s;
+            margin: 0 5px;
         }
-        #config {
+
+        .square.red {
+            background-color: red;
+        }
+
+        #slider-container {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            text-align: left;
+            top: 0;
+            right: 0;
+            padding: 10px;
         }
-        #slider {
-            width: 200px;
+
+        #slider-label {
+            margin-right: 10px;
         }
+
     </style>
 </head>
 <body>
 
-    <h1>Operazioni entro il 100</h1>
-    <div id="config">
-        <label for="timeSlider">Tempo (5-30 secondi):</label>
-        <input type="range" id="timeSlider" min="5" max="30" value="10">
-        <span id="timeValue">10</span> secondi<br>
-        
-        <label><input type="checkbox" id="additionCheck" checked> Solo somme</label><br>
-        <label><input type="checkbox" id="subtractionCheck" checked> Solo sottrazioni</label><br>
+<div class="container">
+    <div id="left-panel">
+        <button id="startButton">Inizia</button>
+        <button id="restartButton" style="display: none;">Ricomincia</button>
+        <div id="results" style="display:none;"></div>
     </div>
-    <button id="startButton">Inizia</button>
-    <div id="operation"></div>
-    <div id="progressBar"><div id="progress"></div></div>
-    <div id="squaresContainer"></div>
-    <button id="resultsButton" style="display: none;">Risultati</button>
-    <button id="restartButton" style="display: none;">Ricomincia</button>
-    <div id="results"></div>
 
-    <script>
-        let currentOperationIndex = 0;
-        const operations = [];
-        const results = [];
-        const maxOperations = 10;
-        let timerInterval;
-        let operationTime = 10; // Default time in seconds
-        let timeInterval; // Variable to hold the interval for changing operations
+    <div>
+        <div id="grid"></div>
+        <div id="timeBar">
+            <div id="timeBarFill"></div>
+        </div>
+        <div id="squareTracker">
+            <!-- Linea di 10 quadratini -->
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+        </div>
+    </div>
+</div>
 
-        // Set slider value from local storage if it exists
-        const savedTime = localStorage.getItem('operationTime');
-        if (savedTime) {
-            operationTime = savedTime;
-            document.getElementById('timeSlider').value = operationTime;
-            document.getElementById('timeValue').textContent = operationTime;
-        }
+<div id="slider-container">
+    <label id="slider-label">Tempo pallini rossi: <span id="timeValue">10</span>s</label>
+    <input type="range" id="timeSlider" min="5" max="30" value="10">
+</div>
 
-        // Update the displayed value of the slider and save it
-        document.getElementById('timeSlider').addEventListener('input', function() {
-            operationTime = this.value;
-            document.getElementById('timeValue').textContent = operationTime;
-            localStorage.setItem('operationTime', operationTime); // Save to local storage
-        });
+<script>
+    const grid = document.getElementById('grid');
+    const startButton = document.getElementById('startButton');
+    const restartButton = document.getElementById('restartButton');
+    const resultsDiv = document.getElementById('results');
+    const timeBarFill = document.getElementById('timeBarFill');
+    const timeSlider = document.getElementById('timeSlider');
+    const timeValue = document.getElementById('timeValue');
+    const squares = document.querySelectorAll('.square');
+    let redDots = []; // Per salvare la lista di pallini diventati rossi
+    let gameInterval;
+    let redCount = 0;
+    let gameDuration = 10000; // Durata del rosso inizialmente
+    let selectedDots = []; // Pallini selezionati durante il gioco
 
-        function generateOperation() {
-            let operation = '';
-            let result = 0;
-            const onlyAddition = document.getElementById('additionCheck').checked && !document.getElementById('subtractionCheck').checked;
-            const onlySubtraction = !document.getElementById('additionCheck').checked && document.getElementById('subtractionCheck').checked;
-            const canAdd = !onlySubtraction; // Can do addition if not limited
-            const canSubtract = !onlyAddition; // Can do subtraction if not limited
-            
-            if (canAdd && (Math.random() < 0.5 || !canSubtract)) {
-                const num1 = Math.floor(Math.random() * 99) + 1; // 1 to 99
-                const num2 = Math.floor(Math.random() * (100 - num1)) + 1; // 1 to (100 - num1)
-                operation = `${num1} + ${num2}`;
-                result = num1 + num2;
-            } else if (canSubtract) {
-                const num1 = Math.floor(Math.random() * 99) + 1; // 1 to 99
-                const num2 = Math.floor(Math.random() * (num1)) + 1; // 1 to num1
-                operation = `${num1} - ${num2}`;
-                result = num1 - num2;
-            }
-
-            operations.push(operation);
-            results.push(result);
-        }
-
-        function displayOperation() {
-            if (currentOperationIndex < maxOperations) {
-                generateOperation();
-                document.getElementById('operation').textContent = operations[currentOperationIndex];
-                document.getElementById('squaresContainer').children[currentOperationIndex].style.backgroundColor = 'red'; // Colora il quadratino
-                currentOperationIndex++;
-                resetProgressBar(); // Riempie la barra completamente
-                startProgressBar(); // Avvia la barra di avanzamento
-            } else {
-                endGame();
+    // Crea la griglia di pallini verdi
+    function createGrid() {
+        for (let row = 0; row < 10; row++) {
+            for (let col = 1; col <= 10; col++) {
+                const dot = document.createElement('div');
+                dot.classList.add('dot');
+                dot.dataset.position = `${row}${col}`; // Salva la posizione del pallino
+                grid.appendChild(dot);
             }
         }
+    }
 
-        function resetProgressBar() {
-            document.getElementById('progress').style.width = '100%'; // Riempie immediatamente la barra
+    function getRandomDot() {
+        const allDots = document.querySelectorAll('.dot');
+        let randomDot;
+
+        do {
+            randomDot = allDots[Math.floor(Math.random() * allDots.length)];
+        } while (redDots.includes(randomDot)); // Evita che lo stesso pallino venga selezionato più volte
+
+        return randomDot;
+    }
+
+    function calculateDotNumber(row, col) {
+        // Se le unità sono 10, considera 0 e aumenta la decina
+        if (col === 10) {
+            row += 1;
+            col = 0;
         }
+        return `${row}${col}`;
+    }
 
-        function startProgressBar() {
-            let progressBarWidth = 100; // Resetta la larghezza della barra
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                progressBarWidth -= (100 / (operationTime-1)); // Diminuisce la larghezza della barra
-                document.getElementById('progress').style.width = progressBarWidth + '%';
-                if (progressBarWidth <= 0) {
-                    clearInterval(timerInterval);
-                    // Non chiamiamo endGame qui
-                }
-            }, 1000); // Aggiorna ogni secondo
-        }
-
-        function endGame() {
-            clearInterval(timerInterval);
-            clearInterval(timeInterval); // Stop changing operations
-            document.getElementById('operation').textContent = ''; // Nasconde l'ultima operazione
-            document.getElementById('resultsButton').style.display = 'block'; // Mostra il pulsante risultati
-            document.getElementById('startButton').style.display = 'none'; // Nasconde il pulsante "Inizia"
-        }
-
-        document.getElementById('startButton').addEventListener('click', function() {
-            operations.length = 0; // Resetta le operazioni
-            results.length = 0; // Resetta i risultati
-            currentOperationIndex = 0; // Resetta l'indice
-            document.getElementById('operation').textContent = '';
-            document.getElementById('resultsButton').style.display = 'none'; // Nasconde il pulsante risultati
-            document.getElementById('squaresContainer').innerHTML = ''; // Resetta i quadratini
-
-            // Crea i quadratini blu
-            for (let i = 0; i < maxOperations; i++) {
-                const square = document.createElement('div');
-                square.className = 'square';
-                document.getElementById('squaresContainer').appendChild(square);
+    function updateBar(duration) {
+        let width = 100;
+        const interval = setInterval(() => {
+            width -= (100 / (duration / 1000));
+            timeBarFill.style.width = width + '%';
+            if (width <= 0) {
+                clearInterval(interval);
             }
+        }, 1000);
+    }
 
-            // Inizia a mostrare le operazioni
-            displayOperation();
-            document.getElementById('startButton').style.display = 'none'; // Nasconde il pulsante "Inizia"
+    function startGame() {
+        redCount = 0;
+        redDots = [];
+        selectedDots = [];
+        resultsDiv.innerHTML = ''; // Reset del pannello risultati
+        resultsDiv.style.display = "none";
 
-            // Disabilita i controlli di configurazione durante il gioco
-            document.getElementById('timeSlider').disabled = true; // Disabilita lo slider
-            document.getElementById('additionCheck').disabled = true; // Disabilita i checkbox
-            document.getElementById('subtractionCheck').disabled = true; // Disabilita i checkbox
+        // Disabilita la configurazione
+        timeSlider.disabled = true;
 
-            // Inizia a cambiare operazioni ogni X secondi
-            timeInterval = setInterval(displayOperation, (operationTime * 1000)); // Cambia operazione ogni X secondi
-            startProgressBar(); // Inizia la barra di avanzamento
+        // Colora subito il primo pallino e inizia il ciclo
+        colorNextDot();
+        gameInterval = setInterval(colorNextDot, gameDuration);
+    }
+
+    function colorNextDot() {
+        if (redCount < 10) {
+            const randomDot = getRandomDot();
+            randomDot.classList.add('red');
+            redDots.push(randomDot);
+
+            const row = Math.floor(randomDot.dataset.position / 10);
+            const col = randomDot.dataset.position % 10;
+            const position = calculateDotNumber(row, col);
+
+            selectedDots.push(position); // Salva la posizione del pallino
+            updateBar(gameDuration);
+
+            // Dopo il tempo selezionato il pallino torna verde
+            setTimeout(() => {
+                randomDot.classList.remove('red');
+            }, gameDuration);
+
+            // Colora i quadratini blu in rosso man mano
+            squares[redCount].classList.add('red');
+            redCount++;
+        } else {
+            endGame();
+        }
+    }
+
+    function endGame() {
+        clearInterval(gameInterval);
+
+        // Fai diventare rossi tutti i pallini che sono stati selezionati e inserisci i numeri
+        redDots.forEach((dot, index) => {
+            dot.classList.add('red');
+            dot.textContent = selectedDots[index]; // Mostra il numero nel pallino alla fine del gioco
         });
 
-        document.getElementById('resultsButton').addEventListener('click', function() {
-            let resultsText = '<h2>Risultati</h2><ul>';
-            for (let i = 0; i < maxOperations; i++) {
-                resultsText += `<li>${operations[i]} = ${results[i]}</li>`;
-            }
-            resultsText += '</ul>';
-            document.getElementById('results').innerHTML = resultsText;
-            document.getElementById('results').style.display = 'block'; // Mostra i risultati
-            // Nasconde il pulsante dei risultati e mostra il pulsante di ricominciare
-            document.getElementById('resultsButton').style.display = 'none';
-            document.getElementById('restartButton').style.display = 'block'; // Mostra il pulsante "Ricomincia"
-        });
+        // Mostra i risultati
+        resultsDiv.innerHTML = selectedDots.map((dot, index) => `Pallino ${index + 1}: ${dot}`).join('<br>');
+        resultsDiv.style.display = 'block';
 
-        document.getElementById('restartButton').addEventListener('click', function() {
-            currentOperationIndex = 0; // Resetta l'indice
-            operations.length = 0; // Resetta le operazioni
-            results.length = 0; // Resetta i risultati
-            document.getElementById('results').style.display = 'none'; // Nasconde i risultati
-            document.getElementById('restartButton').style.display = 'none'; // Nasconde il pulsante ricomincia
-            document.getElementById('squaresContainer').innerHTML = ''; // Resetta i quadratini
-            document.getElementById('startButton').style.display = 'block'; // Mostra il pulsante "Inizia"
-            document.getElementById('operation').textContent = ''; // Nasconde l'operazione
-            document.getElementById('timeSlider').disabled = false; // Riabilita lo slider
-            document.getElementById('additionCheck').disabled = false; // Riabilita i checkbox
-            document.getElementById('subtractionCheck').disabled = false; // Riabilita i checkbox
-        });
+        // Mostra il tasto "ricomincia"
+        restartButton.style.display = 'block';
+    }
 
-    </script>
+    // Inizia il gioco quando viene premuto il pulsante
+    startButton.addEventListener('click', () => {
+        startButton.style.display = 'none'; // Nasconde il pulsante di inizio
+        startGame();
+    });
+
+    // Ricomincia il gioco
+    restartButton.addEventListener('click', () => {
+        restartButton.style.display = 'none'; // Nasconde il pulsante di ricomincia
+        resultsDiv.style.display = 'none'; // Nasconde i risultati
+        squares.forEach(square => square.classList.remove('red')); // Reset quadratini blu
+        const allDots = document.querySelectorAll('.dot');
+        allDots.forEach(dot => {
+            dot.classList.remove('red');
+            dot.textContent = ''; // Rimuove numeri dai pallini
+        });
+        timeSlider.disabled = false; // Riabilita la configurazione
+        startGame();
+    });
+
+    // Aggiorna il tempo di permanenza in rosso del pallino
+    timeSlider.addEventListener('input', () => {
+        gameDuration = timeSlider.value * 1000;
+        timeValue.textContent = timeSlider.value;
+    });
+
+    // Crea la griglia alla partenza
+    createGrid();
+</script>
 
 </body>
 </html>
