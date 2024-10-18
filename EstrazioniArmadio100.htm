@@ -238,10 +238,10 @@
             endGame();
         }
     }
-
-    function endGame() {
+  
+ function endGame() {
         clearInterval(gameInterval);
-    pausecomp(1000);
+
         // Fai diventare rossi tutti i pallini che sono stati selezionati e inserisci i numeri
         redDots.forEach((dot, index) => {
             dot.classList.add('red');
