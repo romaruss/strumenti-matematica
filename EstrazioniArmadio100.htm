@@ -19,8 +19,8 @@
         }
 
         #left-panel {
-            margin-right: 100px; /* Spazio tra pulsanti e griglia aumentato a 100px */
-            width: 200px; /* Larghezza aumentata per evitare che il testo vada a capo */
+            margin-right: 100px;
+            width: 200px;
             position: relative;
         }
 
@@ -47,20 +47,20 @@
             margin-top: 70px;
             position: absolute;
             top: 100px;
-            white-space: nowrap; /* Impedisce al testo di andare a capo */
+            white-space: nowrap;
         }
 
         #grid {
             display: grid;
-            grid-template-columns: repeat(4, 30px) 45px repeat(5, 30px); /* Dimensione aumentata 1,5x */
-            grid-template-rows: repeat(4, 30px) 45px repeat(5, 30px);    /* Spazio tra le due sezioni di righe */
+            grid-template-columns: repeat(4, 30px) 45px repeat(5, 30px);
+            grid-template-rows: repeat(4, 30px) 45px repeat(5, 30px);
             grid-gap: 10px;
             position: relative;
         }
 
         .dot {
-            width: 30px;  /* Dimensione aumentata 1,5x */
-            height: 30px; /* Dimensione aumentata 1,5x */
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             background-color: green;
             display: flex;
@@ -221,41 +221,45 @@
         // Disabilita la configurazione
         timeSlider.disabled = true;
 
-        gameInterval = setInterval(() => {
-            if (redCount < 10) {
-                const randomDot = getRandomDot();
-                randomDot.classList.add('red');
-                redDots.push(randomDot);
+        // Colora subito il primo pallino e inizia il ciclo
+        colorNextDot();
+        gameInterval = setInterval(colorNextDot, gameDuration);
+    }
 
-                const row = Math.floor(randomDot.dataset.position / 10);
-                const col = randomDot.dataset.position % 10;
-                const position = calculateDotNumber(row, col); // Calcola il numero del pallino
+    function colorNextDot() {
+        if (redCount < 10) {
+            const randomDot = getRandomDot();
+            randomDot.classList.add('red');
+            redDots.push(randomDot);
 
-                randomDot.textContent = position; // Mostra il numero nel pallino
-                selectedDots.push(position); // Salva la posizione del pallino
+            const row = Math.floor(randomDot.dataset.position / 10);
+            const col = randomDot.dataset.position % 10;
+            const position = calculateDotNumber(row, col);
 
-                updateBar(gameDuration);
+            selectedDots.push(position); // Salva la posizione del pallino
+            updateBar(gameDuration);
 
-                // Dopo il tempo selezionato il pallino torna verde
-                setTimeout(() => {
-                    randomDot.classList.remove('red');
-                    randomDot.textContent = ''; // Rimuove il numero dal pallino
-                }, gameDuration);
+            // Dopo il tempo selezionato il pallino torna verde
+            setTimeout(() => {
+                randomDot.classList.remove('red');
+            }, gameDuration);
 
-                // Colora i quadratini blu in rosso man mano
-                squares[redCount].classList.add('red');
-                redCount++;
-            } else {
-                endGame();
-            }
-        }, gameDuration);
+            // Colora i quadratini blu in rosso man mano
+            squares[redCount].classList.add('red');
+            redCount++;
+        } else {
+            endGame();
+        }
     }
 
     function endGame() {
         clearInterval(gameInterval);
 
-        // Fai diventare rossi tutti i pallini che sono stati selezionati
-        redDots.forEach(dot => dot.classList.add('red'));
+        // Fai diventare rossi tutti i pallini che sono stati selezionati e inserisci i numeri
+        redDots.forEach((dot, index) => {
+            dot.classList.add('red');
+            dot.textContent = selectedDots[index]; // Mostra il numero nel pallino alla fine del gioco
+        });
 
         // Mostra i risultati
         resultsDiv.innerHTML = selectedDots.map((dot, index) => `Pallino ${index + 1}: ${dot}`).join('<br>');
@@ -278,21 +282,3 @@
         const allDots = document.querySelectorAll('.dot');
         allDots.forEach(dot => {
             dot.classList.remove('red');
-            dot.textContent = ''; // Rimuove numeri dai pallini
-        });
-        timeSlider.disabled = false; // Riabilita la configurazione
-        startGame();
-    });
-
-    // Aggiorna il tempo di permanenza in rosso del pallino
-    timeSlider.addEventListener('input', () => {
-        gameDuration = timeSlider.value * 1000;
-        timeValue.textContent = timeSlider.value;
-    });
-
-    // Crea la griglia alla partenza
-    createGrid();
-</script>
-
-</body>
-</html>
