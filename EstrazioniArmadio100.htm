@@ -185,7 +185,8 @@
         let randomDot;
 
         do {
-            randomDot = allDots[Math.floor(Math.random() * allDots.length)];
+            //randomDot = allDots[Math.floor(Math.random() * allDots.length)];
+            randomDot = allDots[19];
         } while (redDots.includes(randomDot)); // Evita che lo stesso pallino venga selezionato più volte
 
         return randomDot;
@@ -277,8 +278,27 @@
 
     // Ricomincia il gioco
     restartButton.addEventListener('click', () => {
-        restartButton.style.display = 'none';
+        restartButton.style.display = 'none'; // Nasconde il pulsante di ricomincia
+        resultsDiv.style.display = 'none'; // Nasconde i risultati
         squares.forEach(square => square.classList.remove('red')); // Reset quadratini blu
         const allDots = document.querySelectorAll('.dot');
         allDots.forEach(dot => {
             dot.classList.remove('red');
+            dot.textContent = ''; // Rimuove numeri dai pallini
+        });
+        timeSlider.disabled = false; // Riabilita la configurazione
+        startGame();
+    });
+
+    // Aggiorna il tempo di permanenza in rosso del pallino
+    timeSlider.addEventListener('input', () => {
+        gameDuration = timeSlider.value * 1000;
+        timeValue.textContent = timeSlider.value;
+    });
+
+    // Crea la griglia alla partenza
+    createGrid();
+</script>
+
+</body>
+</html>
