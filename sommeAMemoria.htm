@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Somme a memoria</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        #operation {
+            font-size: 3em;
+            margin: 20px;
+        }
+        #startButton, #resultsButton, #restartButton {
+            padding: 10px 20px;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+        #results {
+            margin-top: 20px;
+            display: none;
+        }
+        #progressBar {
+            width: 100%;
+            height: 30px;
+            background-color: #ddd;
+            margin: 20px 0;
+        }
+        #progress {
+            height: 100%;
+            width: 100%;
+            background-color: #4caf50;
+        }
+        .square {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background-color: blue;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+        #config {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            text-align: left;
+        }
+        #slider {
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Somme a memoria</h1>
+    <div id="config">
+        <label for="timeSlider">Tempo (5-30 secondi):</label>
+        <input type="range" id="timeSlider" min="5" max="30" value="10">
+        <span id="timeValue">10</span> secondi<br>
+        
+        <label><input type="checkbox" id="amiciCheck"> Amici del 10</label><br>
+        <label><input type="checkbox" id="entroDieciCheck"> A memoria entro il 10</label><br>
+        <label><input type="checkbox" id="ugualiCheck"> Numeri uguali</label><br>
+        <label><input type="checkbox" id="finoVentiCheck"> A memoria fino a 20</label><br>
+    </div>
+    <button id="startButton">Inizia</button>
+    <div id="operation"></div>
+    <div id="progressBar"><div id="progress"></div></div>
+    <div id="squaresContainer"></div>
+    <button id="resultsButton" style="display: none;">Risultati</button>
+    <button id="restartButton" style="display: none;">Ricomincia</button>
+    <div id="results"></div>
+
+    <script>
+        let currentOperationIndex = 0;
+        const operations = [];
+        const results = [];
+        const maxOperations = 10;
+        let timerInterval;
+        let operationTime = 10; 
+        let timeInterval; 
+
+        const savedTime = localStorage.getItem('operationTime');
+        if (savedTime) {
+            operationTime = savedTime;
+            document.getElementById('timeSlider').value = operationTime;
+            document.getElementById('timeValue').textContent = operationTime;
+        }
+
+        document.getElementById('timeSlider').addEventListener('input', function() {
+            operationTime = this.value;
+            document.getElementById('timeValue').textContent = operationTime;
+            localStorage.setItem('operationTime', operationTime);
+        });
+
+        function generateOperation() {
+            let operation = '';
+            let result = 0;
+
+            const amiciDelDieci = document.getElementById('amiciCheck').checked;
+            const entroDieci = document.getElementById('entroDieciCheck').checked;
+            const numeriUguali = document.getElementById('ugualiCheck').checked;
+            const finoVenti = document.getElementById('finoVentiCheck').checked;
+
+            let num1, num2;
+
+            if (amiciDelDieci) {
+                const amici = [
+                    [1, 9], [2, 8], [3, 7], [4, 6], [5, 5]
+                ];
+                const pair = amici[Math.floor(Math.random() * amici.length)];
+                num1 = pair[0];
+                num2 = pair[1];
+                operation = `${num1} + ${num2}`;
+                result = num1 + num2;
+            } else if (entroDieci) {
+                num1 = Math.floor(Math.random() * 9) + 1;
+                num2 = Math.floor(Math.random() * (10 - num1));
+                operation = `${num1} + ${num2}`;
+                result = num1 + num2;
+            } else if (numeriUguali) {
+                const possible = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+                num1 = possible[Math.floor(Math.random() * possible.length)];
+                num2 = num1;
+                operation = `${num1} + ${num2}`;
+                result = num1 + num2;
+            } else if (finoVenti) {
+                num1 = Math.floor(Math.random() * 19) + 1;
+                num2 = Math.floor(Math.random() * (20 - num1));
+                operation = `${num1} + ${num2}`;
+                result = num1 + num2;
+            }
+
+            if (num1 !== 0 && num2 !== 0) {
+                operations.push(operation);
+                results.push(result);
+            }
+        }
+
+        function displayOperation() {
+            if (currentOperationIndex < maxOperations) {
+                generateOperation();
+                document.getElementById('operation').textContent = operations[currentOperationIndex];
+                document.getElementById('squaresContainer').children[currentOperationIndex].style.backgroundColor = 'red';
+                currentOperationIndex++;
+                resetProgressBar();
+                startProgressBar();
+            } else {
+                endGame();
+            }
+        }
+
+        function resetProgressBar() {
+            document.getElementById('progress').style.width = '100%';
+        }
+
+        function startProgressBar() {
+            let progressBarWidth = 100;
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                progressBarWidth -= (100 / (operationTime - 1));
+                document.getElementById('progress').style.width = progressBarWidth + '%';
+                if (progressBarWidth <= 0) {
+                    clearInterval(timerInterval);
+                }
+            }, 1000);
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            clearInterval(timeInterval);
+            document.getElementById('operation').textContent = '';
+            document.getElementById('resultsButton').style.display = 'block';
+            document.getElementById('startButton').style.display = 'none';
+        }
+
+        document.getElementById('startButton').addEventListener('click', function() {
+            operations.length = 0;
+            results.length = 0;
+            currentOperationIndex = 0;
+            document.getElementById('operation').textContent = '';
+            document.getElementById('resultsButton').style.display = 'none';
+            document.getElementById('squaresContainer').innerHTML = '';
+
+            for (let i = 0; i < maxOperations; i++) {
+                const square = document.createElement('div');
+                square.className = 'square';
+                document.getElementById('squaresContainer').appendChild(square);
+            }
+
+            displayOperation();
+            document.getElementById('startButton').style.display = 'none';
+
+            document.getElementById('timeSlider').disabled = true;
+            document.getElementById('amiciCheck').disabled = true;
+            document.getElementById('entroDieciCheck').disabled = true;
+            document.getElementById('ugualiCheck').disabled = true;
+            document.getElementById('finoVentiCheck').disabled = true;
+
+            timeInterval = setInterval(displayOperation, (operationTime * 1000));
+            startProgressBar();
+        });
+
+        document.getElementById('resultsButton').addEventListener('click', function() {
+            let resultsText = '<h2>Risultati</h2><ul>';
+            for (let i = 0; i < maxOperations; i++) {
+                resultsText += `<li>${operations[i]} = ${results[i]}</li>`;
+            }
+            resultsText += '</ul>';
+            document.getElementById('results').innerHTML = resultsText;
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('resultsButton').style.display = 'none';
+            document.getElementById('restartButton').style.display = 'block';
+        });
+
+        document.getElementById('restartButton').addEventListener('click', function() {
+            currentOperationIndex = 0;
+            operations.length = 0;
+            results.length = 0;
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('operation').textContent = '';
+            document.getElementById('restartButton').style.display = 'none';
+            document.getElementById('resultsButton').style.display = 'none';
+            document.getElementById('startButton').style.display = 'block';
+            document.getElementById('timeSlider').disabled = false;
+            document.getElementById('amiciCheck').disabled = false;
+            document.getElementById('entroDieciCheck').disabled = false;
+            document.getElementById('ugualiCheck').disabled = false;
+            document.getElementById('finoVentiCheck').disabled = false;
+        });
+    </script>
+
+</body>
+</html>
