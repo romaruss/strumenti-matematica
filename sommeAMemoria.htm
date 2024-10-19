@@ -105,49 +105,82 @@
             localStorage.setItem('operationTime', operationTime);
         });
 
-        function generateOperation() {
-            let operation = '';
-            let result = 0;
+        function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
 
-            const amiciDelDieci = document.getElementById('amiciCheck').checked;
-            const entroDieci = document.getElementById('entroDieciCheck').checked;
-            const numeriUguali = document.getElementById('ugualiCheck').checked;
-            const finoVenti = document.getElementById('finoVentiCheck').checked;
+function generateOperation() {
+    let operation = '';
+    let result = 0;
 
-            let num1, num2;
+    const amiciDelDieci = document.getElementById('amiciCheck').checked;
+    const entroDieci = document.getElementById('entroDieciCheck').checked;
+    const numeriUguali = document.getElementById('ugualiCheck').checked;
+    const finoVenti = document.getElementById('finoVentiCheck').checked;
 
-            if (amiciDelDieci) {
-                const amici = [
-                    [1, 9], [2, 8], [3, 7], [4, 6], [5, 5]
-                ];
-                const pair = amici[Math.floor(Math.random() * amici.length)];
-                num1 = pair[0];
-                num2 = pair[1];
-                operation = `${num1} + ${num2}`;
-                result = num1 + num2;
-            } else if (entroDieci) {
-                num1 = Math.floor(Math.random() * 9) + 1;
-                num2 = Math.floor(Math.random() * (10 - num1));
-                operation = `${num1} + ${num2}`;
-                result = num1 + num2;
-            } else if (numeriUguali) {
-                const possible = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-                num1 = possible[Math.floor(Math.random() * possible.length)];
-                num2 = num1;
-                operation = `${num1} + ${num2}`;
-                result = num1 + num2;
-            } else if (finoVenti) {
-                num1 = Math.floor(Math.random() * 19) + 1;
-                num2 = Math.floor(Math.random() * (20 - num1));
-                operation = `${num1} + ${num2}`;
-                result = num1 + num2;
-            }
+    let alreadyGenerated = new Set(); // Per tracciare le somme già generate
+    let num1, num2;
 
-            if (num1 !== 0 && num2 !== 0) {
-                operations.push(operation);
-                results.push(result);
-            }
-        }
+    if (amiciDelDieci) {
+        let amici = [
+            [1, 9], [9, 1], [2, 8], [8, 2], [3, 7], [7, 3], [4, 6], [6, 4], [5, 5]
+        ];
+        amici = shuffle(amici); // Mescola le coppie
+        let pair;
+        do {
+            pair = amici.pop(); // Estrae una coppia dall'array mescolato
+            operation = `${pair[0]} + ${pair[1]}`;
+        } while (alreadyGenerated.has(operation) && amici.length > 0); // Evita somme ripetute
+        alreadyGenerated.add(operation);
+        num1 = pair[0];
+        num2 = pair[1];
+        result = num1 + num2;
+
+    } else if (entroDieci) {
+        let numbers = Array.from({length: 9}, (_, i) => i + 1); // Numeri da 1 a 9
+        numbers = shuffle(numbers); // Mescola i numeri
+        do {
+            num1 = numbers.pop(); // Estrae un numero
+            num2 = Math.floor(Math.random() * (10 - num1)); // Estrae il secondo numero
+            operation = `${num1} + ${num2}`;
+        } while (alreadyGenerated.has(operation) && numbers.length > 0); // Evita somme ripetute
+        alreadyGenerated.add(operation);
+        result = num1 + num2;
+
+    } else if (numeriUguali) {
+        let possible = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        possible = shuffle(possible); // Mescola i numeri
+        do {
+            num1 = possible.pop(); // Estrae un numero
+            num2 = num1;
+            operation = `${num1} + ${num2}`;
+        } while (alreadyGenerated.has(operation) && possible.length > 0); // Evita somme ripetute
+        alreadyGenerated.add(operation);
+        result = num1 + num2;
+
+    } else if (finoVenti) {
+        let numbers = Array.from({length: 19}, (_, i) => i + 1); // Numeri da 1 a 19
+        numbers = shuffle(numbers); // Mescola i numeri
+        do {
+            num1 = numbers.pop(); // Estrae il primo numero
+            num2 = Math.floor(Math.random() * (20 - num1)); // Estrae il secondo numero
+            operation = `${num1} + ${num2}`;
+        } while (alreadyGenerated.has(operation) && numbers.length > 0); // Evita somme ripetute
+        alreadyGenerated.add(operation);
+        result = num1 + num2;
+    }
+
+    if (num1 !== 0 && num2 !== 0) { // Esclude operazioni con lo 0
+        operations.push(operation);
+        results.push(result);
+    }
+}
+
+
 
         function displayOperation() {
             if (currentOperationIndex < maxOperations) {
