@@ -24,7 +24,7 @@
             position: relative;
         }
 
-        #startButton, #restartButton {
+        #startButton, #restartButton, #resultsButton {
             display: block;
             width: 100px;
             height: 40px;
@@ -38,7 +38,7 @@
             position: absolute;
         }
 
-        #startButton:hover, #restartButton:hover {
+        #startButton:hover, #restartButton:hover, #resultsButton:hover {
             background-color: #45a049;
         }
 
@@ -102,20 +102,19 @@
         }
 
         .square.red {
-            background-color: red;
+            background-color: red; 
         }
 
         #slider-container {
-            position: absolute;
-            top: 0;
-            right: 0;
-            padding: 10px;
-        }
-
-        #slider-label {
-            margin-right: 10px;
-        }
-
+             position : absolute; 
+             top :0; 
+             right :0; 
+             padding :10 px; 
+         }
+        
+         #slider-label { 
+             margin-right :10 px; 
+         }
     </style>
 </head>
 <body>
@@ -123,33 +122,34 @@
 <div class="container">
     <div id="left-panel">
         <button id="startButton">Inizia</button>
-        <button id="restartButton" style="display: none;">Ricomincia</button>
+        <button id="restartButton" style="display:none;">Ricomincia</button>
+        <button id="resultsButton" style="display:none;">Risultati</button>
         <div id="results" style="display:none;"></div>
     </div>
 
     <div>
         <div id="grid"></div>
         <div id="timeBar">
-            <div id="timeBarFill"></div>
-        </div>
-        <div id="squareTracker">
-            <!-- Linea di 10 quadratini -->
-            <div class="square"></div>
-            <div class="square"></div>
-            <div class="square"></div>
-            <div class="square"></div>
-            <div class="square"></div>
-            <div class="square"></div>
-            <div class="square"></div>
-            <div class="square"></div>
-            <div class="square"></div>
-            <div class="square"></div>
-        </div>
-    </div>
+           <div id="timeBarFill"></div>
+       </div>
+       <div id="squareTracker">
+           <!-- Linea di 10 quadratini -->
+           <div class="square"></div>
+           <div class="square"></div>
+           <div class="square"></div>
+           <div class="square"></div>
+           <div class="square"></div>
+           <div class="square"></div>
+           <div class="square"></div>
+           <div class="square"></div>
+           <div class="square"></div>
+           <div class="square"></div>
+       </div>
+   </div>
 </div>
 
 <div id="slider-container">
-    <label id="slider-label">Tempo pallini rossi: <span id="timeValue">10</span>s</label>
+    <label id="slider-label">Tempo pallini rossi:<span id="timeValue">10</span>s</label>
     <input type="range" id="timeSlider" min="5" max="30" value="10">
 </div>
 
@@ -157,133 +157,129 @@
     const grid = document.getElementById('grid');
     const startButton = document.getElementById('startButton');
     const restartButton = document.getElementById('restartButton');
+    const resultsButton = document.getElementById('resultsButton');
     const resultsDiv = document.getElementById('results');
     const timeBarFill = document.getElementById('timeBarFill');
     const timeSlider = document.getElementById('timeSlider');
     const timeValue = document.getElementById('timeValue');
     const squares = document.querySelectorAll('.square');
-    let redDots = []; // Per salvare la lista di pallini diventati rossi
-    let gameInterval;
-    let redCount = 0;
-    let gameDuration = 10000; // Durata del rosso inizialmente
-    let selectedDots = []; // Pallini selezionati durante il gioco
+    
+    let redDots = [];
+    let gameInterval; 
+    let redCount = 0; 
+    let gameDuration = 10000; 
+    let selectedDots = []; 
 
-    // Crea la griglia di pallini verdi
     function createGrid() {
-        for (let position = 1; position <= 100; position++) {
-            const dot = document.createElement('div');
-            dot.classList.add('dot');
-            dot.dataset.position = `${position}`; // Salva la posizione del pallino
-            grid.appendChild(dot);
-        }
-    }
+       for (let position = 1; position <= 100; position++) {
+           const dot = document.createElement('div');
+           dot.classList.add('dot');
+           dot.dataset.position = `${position}`; 
+           grid.appendChild(dot);
+       }
+   }
 
-    function getRandomDot() {
-        const allDots = document.querySelectorAll('.dot');
-        let randomDot;
+   function getRandomDot() {
+       const allDots = document.querySelectorAll('.dot');
+       let randomDot;
 
-        do {
-            randomDot = allDots[Math.floor(Math.random() * allDots.length)];
-        } while (redDots.includes(randomDot)); // Evita che lo stesso pallino venga selezionato più volte
+       do {
+           randomDot = allDots[Math.floor(Math.random() * allDots.length)];
+       } while (redDots.includes(randomDot)); 
 
-        return randomDot;
-    }
+       return randomDot; 
+   }
 
-    function updateBar(duration) {
-        let width = 100;
-        const interval = setInterval(() => {
-            width -= (100 / (duration / 1000));
-            timeBarFill.style.width = width + '%';
-            if (width <= 0) {
-                clearInterval(interval);
-            }
-        }, 1000);
-    }
+   function updateBar(duration) {
+       let width = 100; 
+       const interval = setInterval(() => {
+           width -= (100 / (duration / 1000));
+           timeBarFill.style.width = width + '%';
+           if (width <= 0) {
+               clearInterval(interval);
+           }
+       }, 1000);
+   }
 
-    function startGame() {
-        redCount = 0;
-        redDots = [];
-        selectedDots = [];
-        resultsDiv.innerHTML = ''; // Reset del pannello risultati
-        resultsDiv.style.display = "none";
+   function startGame() {
+       redCount = 0; 
+       redDots = []; 
+       selectedDots = []; 
+       resultsDiv.innerHTML = ''; 
+       resultsDiv.style.display = "none"; 
 
-        // Disabilita la configurazione
-        timeSlider.disabled = true;
+       timeSlider.disabled = true;
 
-        // Colora subito il primo pallino e inizia il ciclo
-        colorNextDot();
-        gameInterval = setInterval(colorNextDot, gameDuration);
-    }
+       colorNextDot(); 
+       gameInterval = setInterval(colorNextDot, gameDuration); 
+   }
 
-    function colorNextDot() {
-        if (redCount < 10) {
-            const randomDot = getRandomDot();
-            randomDot.classList.add('red');
-            redDots.push(randomDot);
+   function colorNextDot() {
+       if (redCount < 10) { 
+           const randomDot = getRandomDot(); 
+           randomDot.classList.add('red'); 
+           redDots.push(randomDot); 
 
-            const position = randomDot.dataset.position;
-            selectedDots.push(position); // Salva la posizione del pallino
+           const position = randomDot.dataset.position; 
+           selectedDots.push(position); 
 
-            updateBar(gameDuration);
+           updateBar(gameDuration); 
 
-            // Dopo il tempo selezionato il pallino torna verde
-            setTimeout(() => {
-                randomDot.classList.remove('red');
-            }, gameDuration);
+           setTimeout(() => { 
+               randomDot.classList.remove('red'); 
+           }, gameDuration);
 
-            // Colora i quadratini blu in rosso man mano
-            squares[redCount].classList.add('red');
-            redCount++;
-        } else {
-            endGame();
-        }
-    }
-  
- function endGame() {
-        clearInterval(gameInterval);
+           squares[redCount].classList.add('red'); 
+           redCount++; 
+       } else { 
+          endGame(); 
+      }
+   }
 
-        // Fai diventare rossi tutti i pallini che sono stati selezionati e inserisci i numeri
-        redDots.forEach((dot, index) => {
-            dot.classList.add('red');
-            dot.textContent = selectedDots[index]; // Mostra il numero nel pallino alla fine del gioco
-        });
+   function endGame() { 
+      clearInterval(gameInterval); 
 
-        // Mostra i risultati
-        resultsDiv.innerHTML = selectedDots.map((dot, index) => `Pallino ${index + 1}: ${dot}`).join('<br>');
-        resultsDiv.style.display = 'block';
+      // Mostra il tasto "risultati"
+      resultsButton.style.display = 'block'; // Show results button
+      restartButton.style.display = 'block'; // Show restart button
+   }
 
-        // Mostra il tasto "ricomincia"
-        restartButton.style.display = 'block';
-    }
+   // Mostra i risultati e i pallini rossi quando il pulsante viene cliccato
+   resultsButton.addEventListener('click', () => {
+       redDots.forEach((dot, index) => {  
+          dot.classList.add('red');  
+          dot.textContent = selectedDots[index];  
+      });
+       
+      resultsDiv.innerHTML = selectedDots.map((dot, index) => `Pallino ${index + 1}: ${dot}`).join('<br>');
+      resultsDiv.style.display = 'block'; // Show the results
+   });
 
-    // Inizia il gioco quando viene premuto il pulsante
-    startButton.addEventListener('click', () => {
-        startButton.style.display = 'none'; // Nasconde il pulsante di inizio
-        startGame();
-    });
+   startButton.addEventListener('click', () => { 
+      startButton.style.display = 'none';  
+      startGame();  
+   });
 
-    // Ricomincia il gioco
-    restartButton.addEventListener('click', () => {
-        restartButton.style.display = 'none'; // Nasconde il pulsante di ricomincia
-        resultsDiv.style.display = 'none'; // Nasconde i risultati
-        squares.forEach(square => square.classList.remove('red')); // Reset quadratini blu
-        const allDots = document.querySelectorAll('.dot');
-        allDots.forEach(dot => {
-            dot.classList.remove('red');
-            dot.textContent = ''; // Rimuove numeri dai pallini
-        });
-        timeSlider.disabled = false; // Riabilita la configurazione
-        startGame();
-    });
+   restartButton.addEventListener('click', () => {  
+      restartButton.style.display = 'none';  
+      resultsDiv.style.display = 'none';  
+      resultsButton.style.display = 'none'; // Hide the results button
+      squares.forEach(square => square.classList.remove('red'));  
+      const allDots = document.querySelectorAll('.dot');  
+      allDots.forEach(dot => {  
+          dot.classList.remove('red');  
+          dot.textContent = '';  
+      });
+      timeSlider.disabled = false;  
+      startGame();  
+   });
 
-    // Aggiorna il tempo di permanenza in rosso del pallino
-    timeSlider.addEventListener('input', () => {
-        gameDuration = timeSlider.value * 1000;
-        timeValue.textContent = timeSlider.value;
-    });
+   timeSlider.addEventListener('input', () => {  
+      gameDuration = timeSlider.value * 1000;  
+      timeValue.textContent = timeSlider.value;  
+   });
 
-    // Crea la griglia alla partenza
-    createGrid();
+   createGrid();  
 </script>
 
 </body>
