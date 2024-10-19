@@ -100,6 +100,8 @@
     <button id="resultsButton" style="display: none;">Risultati</button>
     <button id="restartButton" style="display: none;">Ricomincia</button>
     <div id="results"></div>
+   <button id="homeButton" style="position: fixed; bottom: 20px; right: 20px; padding: 10px; font-size: 1em;">Home</button>
+
 
     <script>
         let currentOperationIndex = 0;
@@ -270,6 +272,9 @@
 
         document.getElementById('restartButton').addEventListener('click', function() {
             location.reload();
+        });
+      document.getElementById('homeButton').addEventListener('click', function() {
+            window.location.href = 'index.html'; // Cambia 'index.html' con il nome della tua pagina principale
         });
     </script>
 </body>

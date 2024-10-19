@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Somme a memoria</title>
+    <title>Somme entro il 10</title>
     <style>
         body {
             display: flex;
@@ -80,16 +80,18 @@
 </head>
 <body>
 
-    <h1>Somme a memoria</h1>
+    <h1>Somme Entro il 10</h1>
     <div id="config">
         <label for="timeSlider">Tempo (5-30 secondi):</label>
         <input type="range" id="timeSlider" min="5" max="30" value="10">
         <span id="timeValue">10</span> secondi<br>
         
-        <label><input type="checkbox" id="amiciCheck"> Amici del 10</label><br>
-        <label><input type="checkbox" id="entroDieciCheck"> A memoria entro il 10</label><br>
-        <label><input type="checkbox" id="ugualiCheck"> Numeri uguali</label><br>
-        <label><input type="checkbox" id="finoVentiCheck"> A memoria fino a 20</label><br>
+     
+        <label><input type="checkbox" id="amiciCheck" checked> Amici del 10</label><br>
+        <label><input type="checkbox" id="entroDieciCheck" checked> A memoria entro il 10</label><br>
+        <label><input type="checkbox" id="ugualiCheck" checked> Numeri uguali</label><br>
+        <label><input type="checkbox" id="finoVentiCheck" checked> A memoria fino a 20</label><br>
+   
     </div>
     <button id="startButton">Inizia</button>
     <div id="operation"></div>
@@ -98,8 +100,36 @@
     <button id="resultsButton" style="display: none;">Risultati</button>
     <button id="restartButton" style="display: none;">Ricomincia</button>
     <div id="results"></div>
+   <button id="homeButton" style="position: fixed; bottom: 20px; right: 20px; padding: 10px; font-size: 1em;">Home</button>
+
 
     <script>
+             window.onload = function() {
+            const amiciCheck = document.getElementById('amiciCheck');
+            const entroDieciCheck = document.getElementById('entroDieciCheck');
+            const ugualiCheck = document.getElementById('ugualiCheck');
+            const finoVentiCheck = document.getElementById('finoVentiCheck');
+
+            // Ripristina lo stato dei checkbox dal localStorage
+            amiciCheck.checked = localStorage.getItem('amiciCheck') === 'true';
+            entroDieciCheck.checked = localStorage.getItem('entroDieciCheck') === 'true';
+            ugualiCheck.checked = localStorage.getItem('ugualiCheck') === 'true';
+            finoVentiCheck.checked = localStorage.getItem('finoVentiCheck') === 'true';
+
+            // Aggiorna il localStorage quando cambia lo stato del checkbox
+            amiciCheck.addEventListener('change', function() {
+                localStorage.setItem('amiciCheck', this.checked);
+            });
+            entroDieciCheck.addEventListener('change', function() {
+                localStorage.setItem('entroDieciCheck', this.checked);
+            });
+            ugualiCheck.addEventListener('change', function() {
+                localStorage.setItem('ugualiCheck', this.checked);
+            });
+            finoVentiCheck.addEventListener('change', function() {
+                localStorage.setItem('finoVentiCheck', this.checked);
+            });
+        };
         let currentOperationIndex = 0;
         const operations = [];
         const results = [];
@@ -297,6 +327,9 @@
             document.getElementById('entroDieciCheck').disabled = false;
             document.getElementById('ugualiCheck').disabled = false;
             document.getElementById('finoVentiCheck').disabled = false;
+        });
+      document.getElementById('homeButton').addEventListener('click', function() {
+            window.location.href = 'index.html'; // Cambia 'index.html' con il nome della tua pagina principale
         });
     </script>
 

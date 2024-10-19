@@ -152,6 +152,8 @@
     <label id="slider-label">Tempo pallini rossi:<span id="timeValue">10</span>s</label>
     <input type="range" id="timeSlider" min="5" max="30" value="10">
 </div>
+   <button id="homeButton" style="position: fixed; bottom: 20px; right: 20px; padding: 10px; font-size: 1em;">Home</button>
+
 
 <script>
     const grid = document.getElementById('grid');
@@ -280,6 +282,9 @@
    });
 
    createGrid();  
+  document.getElementById('homeButton').addEventListener('click', function() {
+            window.location.href = 'index.html'; // Cambia 'index.html' con il nome della tua pagina principale
+        });
 </script>
 
 </body>
