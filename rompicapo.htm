@@ -1,106 +1,116 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rompicapo - Sposta i Blocchi</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rompicapo Geometrico</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
 
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background-color: #f0f0f0;
-    }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            grid-gap: 10px;
+        }
 
-    h1 {
-      margin-bottom: 10px;
-    }
+        .block {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            color: white;
+            cursor: pointer;
+        }
 
-    #grid {
-      display: grid;
-      grid-template-columns: repeat(6, 50px);
-      grid-template-rows: repeat(6, 50px);
-      gap: 5px;
-      background-color: #ddd;
-      padding: 10px;
-      border-radius: 5px;
-    }
+        .red { background-color: red; }
+        .blue { background-color: blue; }
+        .green { background-color: green; }
+        .yellow { background-color: yellow; }
+        .orange { background-color: orange; }
 
-    .block {
-      background-color: #333;
-      border-radius: 5px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .red { background-color: red; }
-    .blue { background-color: blue; }
-    .green { background-color: green; }
-    .yellow { background-color: yellow; }
-    .orange { background-color: orange; }
-  </style>
+        #message {
+            margin-top: 20px;
+            font-size: 1.5em;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-  <h1>Rompicapo: Sposta i Blocchi!</h1>
-  <p>Muovi i blocchi geometrici per liberare il blocco rosso.</p>
-  <div id="grid">
-    <div class="block red" data-move="horizontal" style="grid-column: 2 / span 2; grid-row: 3;"></div>
-    <div class="block blue" data-move="vertical" style="grid-column: 4; grid-row: 1 / span 2;"></div>
-    <div class="block green" data-move="horizontal" style="grid-column: 1 / span 3; grid-row: 1;"></div>
-    <div class="block yellow" data-move="vertical" style="grid-column: 3; grid-row: 4 / span 3;"></div>
-    <div class="block orange" data-move="horizontal" style="grid-column: 1 / span 2; grid-row: 5;"></div>
-  </div>
 
-  <script>
+<div class="container" id="grid">
+    <div class="block red" data-index="0">1</div>
+    <div class="block blue" data-index="1">2</div>
+    <div class="block green" data-index="2">3</div>
+    <div class="block yellow" data-index="3">4</div>
+    <div class="block orange" data-index="4">5</div>
+    <div class="block red" data-index="5">6</div>
+    <div class="block blue" data-index="6">7</div>
+    <div class="block green" data-index="7">8</div>
+    <div class="block yellow" data-index="8">9</div>
+    <div class="block orange" data-index="9">10</div>
+    <div class="block red" data-index="10">11</div>
+    <div class="block blue" data-index="11">12</div>
+    <div class="block green" data-index="12">13</div>
+    <div class="block yellow" data-index="13">14</div>
+    <div class="block orange" data-index="14">15</div>
+    <div class="block red" data-index="15"></div> <!-- Spazio vuoto -->
+</div>
+
+<div id="message"></div>
+
+<script>
     const blocks = document.querySelectorAll('.block');
-    let selectedBlock = null;
-    let startPos = null;
+    const grid = document.getElementById('grid');
+    let emptyIndex = 15; // Indice del blocco vuoto
 
-    // Event listener per il drag & drop
     blocks.forEach(block => {
-      block.addEventListener('mousedown', startDrag);
-      block.addEventListener('mouseup', endDrag);
+        block.addEventListener('click', () => moveBlock(block));
     });
 
-    function startDrag(e) {
-      selectedBlock = e.target;
-      startPos = { x: e.clientX, y: e.clientY };
-      document.addEventListener('mousemove', moveBlock);
+    function moveBlock(block) {
+        const blockIndex = parseInt(block.dataset.index);
+        
+        // Controlla se il blocco può essere spostato
+        if (canMove(blockIndex)) {
+            // Scambia il contenuto del blocco con quello vuoto
+            [blocks[emptyIndex].textContent, block.textContent] = [block.textContent, blocks[emptyIndex].textContent];
+            
+            // Aggiorna gli indici
+            [blocks[emptyIndex].dataset.index, block.dataset.index] = [block.dataset.index, emptyIndex];
+            
+            emptyIndex = blockIndex; // Aggiorna l'indice vuoto
+            checkWin(); // Controlla se il gioco è vinto
+        }
     }
 
-    function moveBlock(e) {
-      if (!selectedBlock) return;
-
-      const moveType = selectedBlock.getAttribute('data-move');
-      const deltaX = e.clientX - startPos.x;
-      const deltaY = e.clientY - startPos.y;
-
-      if (moveType === 'horizontal') {
-        selectedBlock.style.transform = `translateX(${deltaX}px)`;
-      } else if (moveType === 'vertical') {
-        selectedBlock.style.transform = `translateY(${deltaY}px)`;
-      }
+    function canMove(blockIndex) {
+        const validMoves = [emptyIndex - 1, emptyIndex + 1, emptyIndex - 4, emptyIndex + 4];
+        return validMoves.includes(blockIndex);
     }
 
-    function endDrag() {
-      document.removeEventListener('mousemove', moveBlock);
-      selectedBlock.style.transform = ''; // reset posizione
-      selectedBlock = null;
-      startPos = null;
+    function checkWin() {
+        let isWin = true;
+
+        blocks.forEach((block, index) => {
+            if (index !== emptyIndex && parseInt(block.dataset.index) !== index) {
+                isWin = false;
+            }
+        });
+
+        if (isWin) {
+            document.getElementById('message').textContent = "Hai vinto!";
+        }
     }
-  </script>
+</script>
+
 </body>
 </html>

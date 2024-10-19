@@ -78,9 +78,17 @@
         <input type="range" id="timeSlider" min="5" max="30" value="10">
         <span id="timeValue">10</span> secondi<br>
         
-        <label><input type="checkbox" id="additionCheck" checked> Solo somme</label><br>
-        <label><input type="checkbox" id="subtractionCheck" checked> Solo sottrazioni</label><br>
-    </div>
+        <label><input type="checkbox" id="additionCheck" checked> Includi somme</label><br>
+        <label><input type="checkbox" id="firstAddendRound" disabled> Primo addendo solo decine tonde</label><br>
+        <label><input type="checkbox" id="secondAddendRound" disabled> Secondo addendo solo decine tonde</label><br>
+        <label><input type="checkbox" id="threeAddends" disabled> Tre addendi</label><br>
+        <label><input type="checkbox" id="thirdAddendRound" disabled> Terzo addendo solo decine tonde</label><br>
+
+        <label><input type="checkbox" id="subtractionCheck" checked> Includi sottrazioni</label><br>
+        <label><input type="checkbox" id="minuendRound" disabled> Minuendo solo decine intere</label><br>
+        <label><input type="checkbox" id="subtrahendRound" disabled> Sottraendo solo decine intere</label><br>
+</div>
+
     <button id="startButton">Inizia</button>
     <div id="operation"></div>
     <div id="progressBar"><div id="progress"></div></div>
@@ -113,7 +121,7 @@
             localStorage.setItem('operationTime', operationTime); // Save to local storage
         });
 
-        function generateOperation() {
+        /*function generateOperation() {
             let operation = '';
             let result = 0;
             const onlyAddition = document.getElementById('additionCheck').checked && !document.getElementById('subtractionCheck').checked;
@@ -135,7 +143,51 @@
 
             operations.push(operation);
             results.push(result);
+        }*/
+      function generateOperation() {
+    let operation = '';
+    let result = 0;
+    const includeAddition = document.getElementById('additionCheck').checked;
+    const includeSubtraction = document.getElementById('subtractionCheck').checked;
+    const firstAddendRound = document.getElementById('firstAddendRound').checked;
+    const secondAddendRound = document.getElementById('secondAddendRound').checked;
+    const threeAddends = document.getElementById('threeAddends').checked;
+    const thirdAddendRound = document.getElementById('thirdAddendRound').checked;
+    const minuendRound = document.getElementById('minuendRound').checked;
+    const subtrahendRound = document.getElementById('subtrahendRound').checked;
+    
+    const canAdd = includeAddition;
+    const canSubtract = includeSubtraction;
+
+    // Genera una somma o sottrazione
+    if (canAdd && (Math.random() < 0.5 || !canSubtract)) {
+        let num1 = firstAddendRound ? Math.floor(Math.random() * 10) * 10 : Math.floor(Math.random() * 99) + 1;
+        let num2 = secondAddendRound ? Math.floor(Math.random() * 10) * 10 : Math.floor(Math.random() * (100 - num1)) + 1;
+        
+        if (threeAddends) {
+            let num3 = thirdAddendRound ? Math.floor(Math.random() * 10) * 10 : Math.floor(Math.random() * (100 - num1 - num2)) + 1;
+            operation = `${num1} + ${num2} + ${num3}`;
+            result = num1 + num2 + num3;
+        } else {
+            operation = `${num1} + ${num2}`;
+            result = num1 + num2;
         }
+    } else if (canSubtract) {
+        let num1 = minuendRound ? Math.floor(Math.random() * 10) * 10 : Math.floor(Math.random() * 99) + 1;
+        let num2 = subtrahendRound ? Math.floor(Math.random() * 10) * 10 : Math.floor(Math.random() * num1) + 1;
+        operation = `${num1} - ${num2}`;
+        result = num1 - num2;
+    }
+
+    // Evita somme con risultato maggiore di 100 o sottrazioni con sottraendo maggiore di 100
+    if (result > 100 || result < 0) {
+        generateOperation(); // Ricrea l'operazione se non valida
+    } else {
+        operations.push(operation);
+        results.push(result);
+    }
+}
+
 
         function displayOperation() {
             if (currentOperationIndex < maxOperations) {
@@ -230,6 +282,25 @@
             document.getElementById('additionCheck').disabled = false; // Riabilita i checkbox
             document.getElementById('subtractionCheck').disabled = false; // Riabilita i checkbox
         });
+      
+      document.getElementById('additionCheck').addEventListener('change', function() {
+            const isChecked = this.checked;
+            document.getElementById('firstAddendRound').disabled = !isChecked;
+            document.getElementById('secondAddendRound').disabled = !isChecked;
+            document.getElementById('threeAddends').disabled = !isChecked;
+            document.getElementById('thirdAddendRound').disabled = !isChecked || !document.getElementById('threeAddends').checked;
+        });
+
+        document.getElementById('threeAddends').addEventListener('change', function() {
+            document.getElementById('thirdAddendRound').disabled = !this.checked;
+        });
+
+        document.getElementById('subtractionCheck').addEventListener('change', function() {
+            const isChecked = this.checked;
+            document.getElementById('minuendRound').disabled = !isChecked;
+            document.getElementById('subtrahendRound').disabled = !isChecked;
+        });
+
 
     </script>
 
