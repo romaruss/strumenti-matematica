@@ -113,6 +113,7 @@
     return array;
 }
 
+
 function generateOperation() {
     let operation = '';
     let result = 0;
@@ -122,63 +123,64 @@ function generateOperation() {
     const numeriUguali = document.getElementById('ugualiCheck').checked;
     const finoVenti = document.getElementById('finoVentiCheck').checked;
 
-    let alreadyGenerated = new Set(); // Per tracciare le somme già generate
-    let num1, num2;
+    let sumsArray = [];
 
-    if (amiciDelDieci) {
-        let amici = [
-            [1, 9], [9, 1], [2, 8], [8, 2], [3, 7], [7, 3], [4, 6], [6, 4], [5, 5]
-        ];
-        amici = shuffle(amici); // Mescola le coppie
-        let pair;
-        do {
-            pair = amici.pop(); // Estrae una coppia dall'array mescolato
-            operation = `${pair[0]} + ${pair[1]}`;
-        } while (alreadyGenerated.has(operation) && amici.length > 0); // Evita somme ripetute
-        alreadyGenerated.add(operation);
-        num1 = pair[0];
-        num2 = pair[1];
-        result = num1 + num2;
+    // Array predefiniti per ogni casistica
+    const amiciDelDieciSums = [
+        [1, 9], [2, 8], [3, 7], [4, 6], [5, 5], [9, 1], [8, 2], [7, 3], [6, 4]
+    ];
 
-    } else if (entroDieci) {
-        let numbers = Array.from({length: 9}, (_, i) => i + 1); // Numeri da 1 a 9
-        numbers = shuffle(numbers); // Mescola i numeri
-        do {
-            num1 = numbers.pop(); // Estrae un numero
-            num2 = Math.floor(Math.random() * (10 - num1)); // Estrae il secondo numero
-            operation = `${num1} + ${num2}`;
-        } while (alreadyGenerated.has(operation) && numbers.length > 0); // Evita somme ripetute
-        alreadyGenerated.add(operation);
-        result = num1 + num2;
+    const entroDieciSums = [
+        //[1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [1, 7], [1, 8],
+        [2, 3], [2, 4], [2, 5], [2, 6], [2, 7],
+        [3, 2], [3, 3], [3, 4], [3, 5], [3, 6],
+        [4, 2], [4, 3], [4, 4], [4, 5],
+        [5, 2], [5, 3], [5, 4],
+        [6, 2], [6, 3],
+        [7, 2],
+        [8, 1]
+    ];
 
-    } else if (numeriUguali) {
-        let possible = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-        possible = shuffle(possible); // Mescola i numeri
-        do {
-            num1 = possible.pop(); // Estrae un numero
-            num2 = num1;
-            operation = `${num1} + ${num2}`;
-        } while (alreadyGenerated.has(operation) && possible.length > 0); // Evita somme ripetute
-        alreadyGenerated.add(operation);
-        result = num1 + num2;
 
-    } else if (finoVenti) {
-        let numbers = Array.from({length: 19}, (_, i) => i + 1); // Numeri da 1 a 19
-        numbers = shuffle(numbers); // Mescola i numeri
-        do {
-            num1 = numbers.pop(); // Estrae il primo numero
-            num2 = Math.floor(Math.random() * (20 - num1)); // Estrae il secondo numero
-            operation = `${num1} + ${num2}`;
-        } while (alreadyGenerated.has(operation) && numbers.length > 0); // Evita somme ripetute
-        alreadyGenerated.add(operation);
-        result = num1 + num2;
+    const numeriUgualiSums = [
+        [1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6], [7, 7], [8, 8], [9, 9], [10, 10]
+    ];
+
+    const finoVentiSums = [];
+    for (let i = 1; i <= 19; i++) {
+        for (let j = 1; j <= (20 - i); j++) {
+            finoVentiSums.push([i, j]);
+        }
     }
 
-    if (num1 !== 0 && num2 !== 0) { // Esclude operazioni con lo 0
+    // Popoliamo l'array sumsArray in base alle checkbox selezionate
+    if (amiciDelDieci) {
+        sumsArray = sumsArray.concat(amiciDelDieciSums);
+    }
+    if (entroDieci) {
+        sumsArray = sumsArray.concat(entroDieciSums);
+    }
+    if (numeriUguali) {
+        sumsArray = sumsArray.concat(numeriUgualiSums);
+    }
+    if (finoVenti) {
+        sumsArray = sumsArray.concat(finoVentiSums);
+    }
+
+    // Mescoliamo l'array per evitare ripetizioni sequenziali
+    sumsArray = shuffle(sumsArray);
+
+    // Estrarre una coppia dall'array mescolato
+    if (sumsArray.length > 0) {
+        const [num1, num2] = sumsArray.pop();
+        operation = `${num1} + ${num2}`;
+        result = num1 + num2;
+
         operations.push(operation);
         results.push(result);
     }
 }
+
 
 
 
