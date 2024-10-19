@@ -155,17 +155,25 @@
     const thirdAddendRound = document.getElementById('thirdAddendRound').checked;
     const minuendRound = document.getElementById('minuendRound').checked;
     const subtrahendRound = document.getElementById('subtrahendRound').checked;
-    
+
     const canAdd = includeAddition;
     const canSubtract = includeSubtraction;
 
+    function getRandomNonZero(min, max) {
+        let num;
+        do {
+            num = Math.floor(Math.random() * (max - min + 1)) + min;
+        } while (num === 0); // Esclude lo 0
+        return num;
+    }
+
     // Genera una somma o sottrazione
     if (canAdd && (Math.random() < 0.5 || !canSubtract)) {
-        let num1 = firstAddendRound ? Math.floor(Math.random() * 10) * 10 : Math.floor(Math.random() * 99) + 1;
-        let num2 = secondAddendRound ? Math.floor(Math.random() * 10) * 10 : Math.floor(Math.random() * (100 - num1)) + 1;
-        
+        let num1 = firstAddendRound ? getRandomNonZero(1, 9) * 10 : getRandomNonZero(1, 99); // Esclude lo 0
+        let num2 = secondAddendRound ? getRandomNonZero(1, 9) * 10 : getRandomNonZero(1, 100 - num1); // Esclude lo 0
+
         if (threeAddends) {
-            let num3 = thirdAddendRound ? Math.floor(Math.random() * 10) * 10 : Math.floor(Math.random() * (100 - num1 - num2)) + 1;
+            let num3 = thirdAddendRound ? getRandomNonZero(1, 9) * 10 : getRandomNonZero(1, 100 - num1 - num2); // Esclude lo 0
             operation = `${num1} + ${num2} + ${num3}`;
             result = num1 + num2 + num3;
         } else {
@@ -173,8 +181,8 @@
             result = num1 + num2;
         }
     } else if (canSubtract) {
-        let num1 = minuendRound ? Math.floor(Math.random() * 10) * 10 : Math.floor(Math.random() * 99) + 1;
-        let num2 = subtrahendRound ? Math.floor(Math.random() * 10) * 10 : Math.floor(Math.random() * num1) + 1;
+        let num1 = minuendRound ? getRandomNonZero(1, 9) * 10 : getRandomNonZero(1, 99); // Esclude lo 0
+        let num2 = subtrahendRound ? getRandomNonZero(1, 9) * 10 : getRandomNonZero(1, num1); // Esclude lo 0
         operation = `${num1} - ${num2}`;
         result = num1 - num2;
     }
@@ -187,6 +195,7 @@
         results.push(result);
     }
 }
+
 
 
         function displayOperation() {
