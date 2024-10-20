@@ -32,5 +32,5 @@ function loadPage(page, script) {
 // Assegna l'evento click al link "Operazioni entro il 100"
 document.getElementById('linkOperazioni100').addEventListener('click', function(e) {
     e.preventDefault(); // Evita la navigazione normale
-    loadPage('html/operazioniEntroil100.html', 'js/operazioniEntroil100.js'); // Carica la pagina operazioni.html e il relativo script
+    loadPage('html/operazioniEntroil100.htm', 'js/comune.js','js/operazioniEntroil100.js'); // Carica la pagina operazioni.html e il relativo script
 });
