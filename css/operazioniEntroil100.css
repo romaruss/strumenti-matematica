@@ -1,0 +1,52 @@
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    text-align: center;
+}
+
+#operation {
+    font-size: 3em;
+    margin: 20px;
+}
+
+#startButton, #resultsButton, #restartButton {
+    padding: 10px 20px;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+#results {
+    margin-top: 20px;
+    display: none;
+    font-size: 1.5em;
+    text-align: left;
+}
+
+#config {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    text-align: left;
+}
+
+#resultsTable {
+    margin-top: 20px;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#resultsTable th, #resultsTable td {
+    border: 1px solid black;
+    padding: 15px;
+    text-align: center;
+    font-size: 1.2em;
+}
+
+#resultsTable th {
+    background-color: #f2f2f2;
+}
