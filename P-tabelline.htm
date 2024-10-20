@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabelline</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+        }
+        #operation {
+            font-size: 3em;
+            margin: 20px;
+        }
+        #startButton, #resultsButton, #restartButton {
+            padding: 10px 20px;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+        #results {
+            margin-top: 20px;
+            display: none;
+            font-size: 1.5em;
+            text-align: left;
+        }
+        #progressBar {
+            width: 100%;
+            height: 30px;
+            background-color: #ddd;
+            margin: 20px 0;
+        }
+        #progress {
+            height: 100%;
+            width: 100%;
+            background-color: #4caf50;
+        }
+        #config {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            text-align: left;
+        }
+        #resultsTable {
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        #resultsTable th, #resultsTable td {
+            border: 1px solid black;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.2em;
+        }
+        #resultsTable th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Tabelline</h1>
+    <div id="config">
+        <label><input type="checkbox" id="twoTimesTable" checked> Tabellina del 2</label><br>
+        <label><input type="checkbox" id="threeTimesTable" checked> Tabellina del 3</label><br>
+        <label><input type="checkbox" id="fourTimesTable" checked> Tabellina del 4</label><br>
+        <label><input type="checkbox" id="fiveTimesTable" checked> Tabellina del 5</label><br>
+        <label><input type="checkbox" id="sixTimesTable" checked> Tabellina del 6</label><br>
+        <label><input type="checkbox" id="sevenTimesTable" checked> Tabellina del 7</label><br>
+        <label><input type="checkbox" id="eightTimesTable" checked> Tabellina del 8</label><br>
+        <label><input type="checkbox" id="nineTimesTable" checked> Tabellina del 9</label><br>
+        
+        <label for="timeSlider">Tempo (5-30 secondi):</label>
+        <input type="range" id="timeSlider" min="5" max="30" value="10">
+        <span id="timeValue">10</span> secondi<br>
+    </div>
+
+    <button id="startButton">Inizia</button>
+    <div id="operation"></div>
+    <div id="progressBar"><div id="progress"></div></div>
+    <button id="resultsButton" style="display: none;">Risultati</button>
+    <button id="restartButton" style="display: none;">Ricomincia</button>
+    <div id="results"></div>
+    <button id="homeButton" style="position: fixed; bottom: 20px; right: 20px; padding: 10px; font-size: 1em;">Home</button>
+
+    <script>
+        let currentOperationIndex = 0;
+        const operations = [];
+        const results = [];
+        const maxOperations = 10;
+        let timerInterval;
+        let operationTime = 10;
+
+        // Set slider value from local storage if it exists
+        const savedTime = localStorage.getItem('operationTime');
+        if (savedTime) {
+            operationTime = savedTime;
+            document.getElementById('timeSlider').value = operationTime;
+            document.getElementById('timeValue').textContent = operationTime;
+        }
+
+        // Update the displayed value of the slider and save it
+        document.getElementById('timeSlider').addEventListener('input', function() {
+            operationTime = this.value;
+            document.getElementById('timeValue').textContent = operationTime;
+            localStorage.setItem('operationTime', operationTime);
+        });
+
+        function generateOperation() {
+            let operation = '';
+            let result = 0;
+
+            const table2 = document.getElementById('twoTimesTable').checked;
+            const table3 = document.getElementById('threeTimesTable').checked;
+            const table4 = document.getElementById('fourTimesTable').checked;
+            const table5 = document.getElementById('fiveTimesTable').checked;
+            const table6 = document.getElementById('sixTimesTable').checked;
+            const table7 = document.getElementById('sevenTimesTable').checked;
+            const table8 = document.getElementById('eightTimesTable').checked;
+            const table9 = document.getElementById('nineTimesTable').checked;
+
+            // Crea un array delle tabelline selezionate
+            const tables = [];
+            if (table2) tables.push(2);
+            if (table3) tables.push(3);
+            if (table4) tables.push(4);
+            if (table5) tables.push(5);
+            if (table6) tables.push(6);
+            if (table7) tables.push(7);
+            if (table8) tables.push(8);
+            if (table9) tables.push(9);
+
+            // Estrai una tabellina casuale
+            const table = tables[Math.floor(Math.random() * tables.length)];
+            const multiplier = currentOperationIndex + 1; // Moltiplicatore da 1 a 10
+            operation = `${table} x ${multiplier}`;
+            result = table * multiplier;
+
+            operations.push(operation);
+            results.push(result);
+        }
+
+        function displayOperation() {
+            if (currentOperationIndex < maxOperations) {
+                generateOperation();
+                document.getElementById('operation').textContent = operations[currentOperationIndex];
+                currentOperationIndex++;
+                resetProgressBar();
+                startProgressBar();
+            } else {
+                endGame();
+            }
+        }
+      
+
+        function resetProgressBar() {
+            document.getElementById('progress').style.width = '100%';
+        }
+
+        function startProgressBar() {
+            let progress = 100;
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                progress -= (100 / (operationTime * 10));
+                if (progress <= 0) {
+                    clearInterval(timerInterval);
+                    displayOperation();
+                } else {
+                    document.getElementById('progress').style.width = `${progress}%`;
+                }
+            }, 100);
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            document.getElementById('operation').style.display = 'none';
+            document.getElementById('resultsButton').style.display = 'inline';
+            document.getElementById('restartButton').style.display = 'inline';
+            displayResults();
+        }
+
+        function displayResults() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+            resultsDiv.style.display = 'block';
+
+            const resultsTable = document.createElement('table');
+            resultsTable.setAttribute('id', 'resultsTable');
+
+            const headerRow = document.createElement('tr');
+            const operationHeader = document.createElement('th');
+            operationHeader.textContent = 'Operazione';
+            const resultHeader = document.createElement('th');
+            resultHeader.textContent = 'Risultato';
+            headerRow.appendChild(operationHeader);
+            headerRow.appendChild(resultHeader);
+            resultsTable.appendChild(headerRow);
+
+            for (let i = 0; i < operations.length; i++) {
+                const row = document.createElement('tr');
+                const operationCell = document.createElement('td');
+                operationCell.textContent = operations[i];
+                const resultCell = document.createElement('td');
+                resultCell.textContent = results[i];
+                row.appendChild(operationCell);
+                row.appendChild(resultCell);
+                resultsTable.appendChild(row);
+            }
+
+            resultsDiv.appendChild(resultsTable);
+        }
+
+        document.getElementById('startButton').addEventListener('click', function() {
+            currentOperationIndex = 0;
+            operations.length = 0;
+            results.length = 0;
+            document.getElementById('operation').style.display = 'block';
+            displayOperation();
+        });
+
+        document.getElementById('resultsButton').addEventListener('click', function() {
+            endGame();
+        });
+
+        document.getElementById('restartButton').addEventListener('click', function() {
+            location.reload();
+        });
+
+        document.getElementById('homeButton').addEventListener('click', function() {
+            window.location.href = 'index.html'; // Cambia 'index.html' con il nome della tua pagina principale
+        });
+    </script>
+</body>

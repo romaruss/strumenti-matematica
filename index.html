@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagine di esercizi</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        #button-container {
+            display: grid;
+            grid-template-columns: 8cm 8cm;
+            grid-gap: 20px;
+        }
+
+        .exercise-button {
+            width: 8cm;
+            height: 1cm;
+            font-size: 1.2em;
+            text-align: center;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .exercise-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="button-container">        
+        <button class="exercise-button" onclick="location.href='P-SommeAMemoria.htm'">Operazioni entro il 20</button>
+        <button class="exercise-button" onclick="location.href='P-OperazioniEntroIl100.htm'">Operazioni entro il 100</button>
+        <button class="exercise-button" onclick="location.href='P-EstrazioniArmadio100.htm'">Armadio del 100</button>
+        <button class="exercise-button" onclick="location.href='P-tabelline.htm'">Tabelline</button>
+        <button class="exercise-button"></button>
+        <button class="exercise-button"></button>
+        <button class="exercise-button"></button>
+        <button class="exercise-button"></button>
+        <button class="exercise-button"></button>
+        <button class="exercise-button"></button>
+    </div>
+
+</body>
+</html>
+
