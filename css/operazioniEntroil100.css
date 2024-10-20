@@ -1,52 +1,67 @@
-body {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    text-align: center;
-}
-
-#operation {
-    font-size: 3em;
-    margin: 20px;
-}
-
-#startButton, #resultsButton, #restartButton {
-    padding: 10px 20px;
-    font-size: 1.5em;
-    cursor: pointer;
-}
-
-#results {
-    margin-top: 20px;
-    display: none;
-    font-size: 1.5em;
-    text-align: left;
-}
-
-#config {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    text-align: left;
-}
-
-#resultsTable {
-    margin-top: 20px;
-    border-collapse: collapse;
-    width: 100%;
-}
-
-#resultsTable th, #resultsTable td {
-    border: 1px solid black;
-    padding: 15px;
-    text-align: center;
-    font-size: 1.2em;
-}
-
-#resultsTable th {
-    background-color: #f2f2f2;
-}
+       body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+        }
+        #operation {
+            font-size: 3em;
+            margin: 20px;
+        }
+        #startButton, #resultsButton, #restartButton {
+            padding: 10px 20px;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+        #results {
+            margin-top: 20px;
+            display: none;
+            font-size: 1.5em; /* Aumentato il font size dei risultati */
+            text-align: left; /* Allinea il testo a sinistra */
+        }
+        #progressBar {
+            width: 100%;
+            height: 30px;
+            background-color: #ddd;
+            margin: 20px 0;
+        }
+        #progress {
+            height: 100%;
+            width: 100%;
+            background-color: #4caf50; /* Colore verde */
+        }
+        .square {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background-color: blue;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+        #config {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            text-align: left;
+        }
+        #slider {
+            width: 200px;
+        }
+        #resultsTable {
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        #resultsTable th, #resultsTable td {
+            border: 1px solid black;
+            padding: 15px; /* Aumentato il padding */
+            text-align: center;
+            font-size: 1.2em; /* Aumentato il font size */
+        }
+        #resultsTable th {
+            background-color: #f2f2f2; /* Colore di sfondo per l'intestazione */
+        }

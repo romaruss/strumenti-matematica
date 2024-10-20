@@ -1,11 +1,3 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Operazioni entro il 100</title>
-    <link rel="stylesheet" href="../css/operazioniEntroil100.css">
-</head>
 <body>
 
     <h1>Operazioni entro il 100</h1>
@@ -13,7 +5,7 @@
         <label for="timeSlider">Tempo (5-30 secondi):</label>
         <input type="range" id="timeSlider" min="5" max="30" value="10">
         <span id="timeValue">10</span> secondi<br>
-
+        
         <label><input type="checkbox" id="additionCheck" checked> Includi somme</label><br>
         <label><input type="checkbox" id="firstAddendRound" disabled> Primo addendo solo decine tonde</label><br>
         <label><input type="checkbox" id="secondAddendRound" disabled> Secondo addendo solo decine tonde</label><br>
@@ -32,9 +24,8 @@
     <button id="resultsButton" style="display: none;">Risultati</button>
     <button id="restartButton" style="display: none;">Ricomincia</button>
     <div id="results"></div>
-    <button id="homeButton" style="position: fixed; bottom: 20px; right: 20px; padding: 10px; font-size: 1em;">Home</button>
+   <button id="homeButton" style="position: fixed; bottom: 20px; right: 20px; padding: 10px; font-size: 1em;">Home</button>
 
-    <script src="comune.js"></script> <!-- Script comune -->
-    <script src="operazioniEntroil100.js"></script> <!-- Script specifico per questa applicazione -->
+
+  <script>../js/operazinoiEntroil100.js</script>
 </body>
-</html>
