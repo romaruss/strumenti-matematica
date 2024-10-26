@@ -6,10 +6,13 @@
           <main class="main-content" :class="{ 'scrolled': isScrolled }">
               <h2>Benvenuto su Strumenti Matematici</h2>
               <p>Qui trovi strumenti matematici utili per studenti e insegnanti.</p>
+              <RouterView />
           </main>
+          
           <AppSidebar />
+          
       </div>
-      <RouterView />
+      
     </div>
   
 </template>
