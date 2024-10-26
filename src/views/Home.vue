@@ -1,6 +1,7 @@
 <template>
   <main>
     Homepage
+    <router-link to="/estrazioneOperazioni">Estrazione Operazioni</router-link>
   </main>
 </template>
 
