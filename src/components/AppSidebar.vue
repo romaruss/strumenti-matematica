@@ -3,8 +3,9 @@
         <h2>Funzionalità</h2>
         <ul>
             <li><router-link to="/estrazioneOperazioni">Operazioni</router-link></li>
-            <li><router-link to="/armadio100">Armadio del 100</router-link></li>
-            <li><router-link to="/tabelline">Tabelline</router-link></li>
+            <li><router-link to="/">Armadio del 100</router-link></li>
+            <li><router-link to="/">Tabelline</router-link></li>
+            <li><router-link to="/">Home</router-link></li>
         
         </ul>
     </nav>

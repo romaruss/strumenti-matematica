@@ -9,6 +9,7 @@
           <AppSidebar />
       </div>
   </div>
+  <RouterView />
 </template>
 
 
