@@ -1,5 +1,7 @@
+
 <template>
     <div class="estrazione-operazioni">
+      
       <!-- Parte 1: Bottone Configurazione -->
       <button @click="toggleConfig" class="config-button">Configurazione</button>
   
@@ -84,6 +86,7 @@
   </template>
   
   <script>
+import '@/assets/estrazioneOperazioni.css'
   export default {
     data() {
       return {
@@ -156,9 +159,7 @@
       }
     }
   };
+
   </script>
   
-  <style scoped>
-  /* CSS per organizzare layout, overlay e stile generale */
-  </style>
   
