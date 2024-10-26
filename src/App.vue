@@ -1,9 +1,5 @@
 <template>
 
-  <div class="absolute top-[150px] left-[20px]">
-        <RouterView />
-    </div>
-
   <div>
       <AppNavbar :isScrolled="isScrolled" />
       <div class="content-container">
