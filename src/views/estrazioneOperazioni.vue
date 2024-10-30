@@ -92,8 +92,8 @@
       <span>{{ gameTimer }} secondi</span> <!-- Visualizza il valore selezionato -->
       <!-- fine timer di gioco-->
 
-      
-       <button v-if="!gameStarted" @click="startGame">Inizia</button>
+
+      <button v-if="!gameStarted" @click="startGame">Inizia</button>
       <button v-else @click="stopGame">Stop</button>
 
       <!-- Area per le operazioni estratte -->
@@ -105,7 +105,8 @@
 
     <!-- Parte 3: Traccia del Progresso -->
     <div class="progress-area">
-      <div class="time-bar" :style="{ width: timeBarWidth + '%' }"></div>
+      <div class="time-bar" :class="timerClass" :style="{ width: timeBarWidth + '%' }"></div>
+      
       <div class="progress-indicator">
         <span v-for="(status, index) in progressArray" :key="index" :class="status"></span>
       </div>
@@ -127,11 +128,55 @@
 
 <script>
 const LIVELLO_DEBUG = true; // Abilita il debug
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
+import { generateOperation } from '@/utils/generateOperation';
 
 export default {
   setup() {
     const showConfig = ref(false);
+
+    const loadConfig = () => {
+    const savedConfig = localStorage.getItem('config'); // Recupera la configurazione salvata
+    if (savedConfig) {
+        const config = JSON.parse(savedConfig);
+        // Carica le variabili dal localStorage
+        sectionEnabled.Addizioni = config.sectionEnabled.Addizioni || true;
+        sectionEnabled.Sottrazioni = config.sectionEnabled.Sottrazioni || true;
+        sectionEnabled.Moltiplicazioni = config.sectionEnabled.Moltiplicazioni || true;
+        sectionEnabled.Divisioni = config.sectionEnabled.Divisioni || true;
+
+        // Carica le opzioni selezionate
+        selectedOptions.Addizioni = config.selectedOptions.Addizioni || [];
+        selectedOptions.Sottrazioni = config.selectedOptions.Sottrazioni || [];
+        selectedOptions.Moltiplicazioni = config.selectedOptions.Moltiplicazioni || [];
+        selectedOptions.Divisioni = config.selectedOptions.Divisioni || [];
+        
+        // Carica le altre impostazioni
+        enableSound.value = config.enableSound || false;
+        operationsCount.value = config.operationsCount || 5;
+        digitalAnswer.value = config.digitalAnswer || false;
+        gameTimer.value = config.gameTimer || 10;
+    }
+};
+const saveConfig = () => {
+    const config = {
+        sectionEnabled,
+        selectedOptions,
+        enableSound: enableSound.value,
+        operationsCount: operationsCount.value,
+        digitalAnswer: digitalAnswer.value,
+        gameTimer: gameTimer.value,
+    };
+    localStorage.setItem('config', JSON.stringify(config)); // Salva nel localStorage
+};
+
+// Chiama loadConfig quando il componente è montato
+onMounted(() => {
+    loadConfig();
+});
+
+
+
     const selectedOptions = reactive({
       Addizioni: [],
       Sottrazioni: [],
@@ -144,6 +189,7 @@ export default {
         { name: 'Add10', label: 'Addizioni entro il 10' },
         { name: 'Add20', label: 'Addizioni entro il 20' },
         { name: 'Add100', label: 'Addizioni entro il 100' },
+        { name: 'FirstAddendTens', label: 'Primo addendo solo decine tonde' }, 
         { name: 'SecondAddendTens', label: 'Secondo addendo solo decine tonde' },
         { name: 'ThreeAddends', label: 'Tre addendi' },
         { name: 'ThirdAddendTens', label: 'Terzo addendo solo decine tonde' }
@@ -188,6 +234,7 @@ export default {
 
     const toggleConfig = () => {
       showConfig.value = !showConfig.value;
+      saveConfig();
     };
 
     const isChildDisabled = (key, optionName) => {
@@ -195,7 +242,7 @@ export default {
       if (!sectionEnabled[key]) return true;
 
       // Disabilita checkbox figlie se 'Add100' non è selezionato
-      if (key === 'Addizioni' && ['SecondAddendTens', 'ThreeAddends', 'ThirdAddendTens'].includes(optionName)) {
+      if (key === 'Addizioni' && ['FirstAddendTens','SecondAddendTens', 'ThreeAddends', 'ThirdAddendTens'].includes(optionName)) {
         return !selectedOptions.Addizioni.includes('Add100');
       }
 
@@ -208,19 +255,38 @@ export default {
           opt => !['SecondAddendTens', 'ThreeAddends', 'ThirdAddendTens'].includes(opt)
         );
       }
+      saveConfig();
     };
 
     const startGame = () => {
-      if (LIVELLO_DEBUG) {
-        console.log("Inizio gioco"); // Messaggio di debug
-      }
-      gameStarted.value = true;
-      showResults.value = false;
-      extractedOperations.value = [];
-      progressArray.value = Array(operationsCount.value).fill('blue');
-      startTimer();
-      generateOperation();
-    };
+  if (LIVELLO_DEBUG) {
+    console.log("Inizio gioco"); // Messaggio di debug
+  }
+  gameStarted.value = true;
+  showResults.value = false;
+  extractedOperations.value = [];
+  progressArray.value = Array(operationsCount.value).fill('blue'); // Imposta i pallini come "non completati"
+
+  generateOperationWrapper(); // Estrai immediatamente la prima operazione
+  startTimer();
+  executeOperationCycle(); // Avvia il ciclo delle operazioni
+
+  saveConfig();
+};
+
+const executeOperationCycle = () => {
+  let currentExtraction = 0;
+
+  const extractionInterval = setInterval(() => {
+    if (currentExtraction < operationsCount.value) {
+      generateOperationWrapper();  // Chiama la funzione per generare una nuova operazione
+      currentExtraction += 1;
+    } else {
+      clearInterval(extractionInterval); // Ferma il ciclo di estrazione
+      endGame(); // Mostra i risultati alla fine
+    }
+  }, gameTimer.value * 1000);
+};    
 
 
     const stopGame = () => {
@@ -228,29 +294,23 @@ export default {
       clearInterval(timerInterval);
     };
 
-    const generateOperation = () => {
-      // Simulazione di generazione di operazioni
-      const operation = { expression: '2 + 2', correctAnswer: 4 }; // Questo deve essere sostituito con la logica di generazione reale
+    const generateOperationWrapper = () => {
+      const operation = generateOperation(selectedOptions); // Utilizza la funzione importata
       extractedOperations.value.push(operation);
       currentOperation.value = operation;
 
+      // ... Aggiornamenti della UI, logiche di avanzamento, ecc. ...
+
       // Aggiorna il progresso
-      if (progressArray.value.length > 0) {
-        progressArray.value[extractedOperations.value.length - 1] = 'red';
-      }
+      progressArray.value[extractedOperations.value.length - 1] = 'red';
 
       // Se la risposta digitale è abilitata, cambia il colore se corretto
       if (digitalAnswer.value) {
         userAnswer.value = '';
       }
 
-      // Estrai una nuova operazione con frequenza del timer
-      if (extractedOperations.value.length < operationsCount.value) {
-        setTimeout(generateOperation, gameTimer.value * 1000); // Delay basato sul timer
-      } else {
-        endGame();
-      }
     };
+
 
     const endGame = () => {
       clearInterval(timerInterval);
@@ -263,7 +323,7 @@ export default {
       if (parseInt(userAnswer.value) === current.correctAnswer) {
         progressArray.value[extractedOperations.value.length - 1] = 'green';
       }
-      generateOperation();
+      generateOperationWrapper();
     };
 
     const restartGame = () => {
@@ -274,20 +334,30 @@ export default {
       timeBarWidth.value = 100;
     };
 
-    const startTimer = () => {
-      timeBarWidth.value = 100;
-      let timeLeft = gameTimer.value;
+    const timerClass = ref(''); // Gestirà l'animazione della barra
 
-      timerInterval = setInterval(() => {
-        timeLeft--;
-        timeBarWidth.value = (timeLeft / gameTimer.value) * 100;
+const startTimer = () => {
+  timeBarWidth.value = 100;
+  timerClass.value = 'no-transition'; // Rendi il ripristino istantaneo
 
-        if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          endGame();
-        }
-      }, 1000);
-    };
+  // Delay breve per applicare la classe, poi avvia l'animazione
+  setTimeout(() => {
+    timerClass.value = 'smooth-transition'; // Riabilita l'animazione
+  }, 1000); // 20ms per permettere il cambio di classe
+
+  let timeLeft = gameTimer.value;
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    timeBarWidth.value = (timeLeft / gameTimer.value) * 100;
+
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval); // Ferma il timer per questa operazione
+      timeLeft = gameTimer.value; // Reset del timer per la prossima operazione
+      startTimer(); // Rilancia il timer per la prossima operazione
+    }
+  }, 1000);
+};
 
     return {
       showConfig,
@@ -313,7 +383,9 @@ export default {
       submitAnswer,
       restartGame,
       startTimer,
-      endGame
+      endGame,
+      generateOperationWrapper,
+      timerClass
     };
   }
 };
