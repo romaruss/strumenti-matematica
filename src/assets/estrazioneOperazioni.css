@@ -129,7 +129,11 @@ button:hover {
 }
 
 .progress-indicator span.active {
-  background-color: red;
+  background-color: rgb(221, 207, 14);
+}
+
+.progress-indicator span.incomplete {
+  background-color: rgb(228, 13, 210);
 }
 
 /* Tabella dei risultati */
