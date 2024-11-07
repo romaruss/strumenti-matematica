@@ -272,28 +272,10 @@ export default {
       progressArray.value = Array(operationsCount.value).fill('blue'); // Imposta i pallini come "non completati"
 
       generateOperationWrapper(); // Estrai immediatamente la prima operazione
-      //startTimer();
-      //executeOperationCycle(); // Avvia il ciclo delle operazioni
 
       saveConfig();
     };
 
-
-
-    /*const executeOperationCycle = () => {
-      let currentExtraction = 0;
-
-      const extractionInterval = setInterval(() => {
-        if (currentExtraction < operationsCount.value) {
-          generateOperationWrapper();  // Chiama la funzione per generare una nuova operazione
-          currentExtraction += 1;
-        } else {
-          clearInterval(extractionInterval); // Ferma il ciclo di estrazione
-          endGame(); // Mostra i risultati alla fine
-        }
-      }, gameTimer.value * 1000);
-    };
-*/
 
     const stopGame = () => {
       gameStarted.value = false;
@@ -313,8 +295,6 @@ export default {
       userAnswer.value = ''; // Resetta la risposta per ogni nuova operazione
       startTimer(); // Avvia il timer per la nuova operazione
     };
-
-
 
     // Funzione per inviare e valutare la risposta
     const submitAnswer = () => {
@@ -346,7 +326,6 @@ export default {
         clearInterval(timerInterval.value);
       }
     });
-
 
     // Inizia la prima operazione quando si avvia il gioco
     onMounted(() => {

@@ -1,113 +1,285 @@
-// generateOperation.js
+// Lista di operazioni già estratte per evitare duplicati
+const extractedOperations = []
 
-const extractedOperations = []; // Memorizza le operazioni già estratte
+// Genera un numero casuale tra min e max (inclusi), evitando 0
+const getRandomNumber = (min, max) => {
+  let num
+  do {
+    num = Math.floor(Math.random() * (max - min + 1)) + min
+  } while (num === 0)
+  return num
+}
 
+// Verifica che l'operazione non sia un duplicato
+const isDuplicate = (expression) => {
+  return extractedOperations.some((op) => op.expression === expression)
+}
+
+// Funzione principale per generare l'operazione
 function generateOperation(selectedOptions) {
-  const operations = [];
-  let operation = {};
+  // Raccoglie tutte le categorie selezionate
+  const categories = []
 
-  const getRandomNumber = (min, max) => {
-    let num;
-    do {
-      num = Math.floor(Math.random() * (max - min + 1)) + min;
-    } while (num === 0); // Evita lo 0
-    return num;
-  };
+  // Popola la lista delle categorie in base alle selezioni
+  if (selectedOptions.Addizioni.includes('Add10')) categories.push('Add10')
+  if (selectedOptions.Addizioni.includes('Add20')) categories.push('Add20')
+  if (selectedOptions.Addizioni.includes('Add100')) categories.push('Add100')
+  if (selectedOptions.Sottrazioni.includes('Sub10')) categories.push('Sub10')
+  if (selectedOptions.Sottrazioni.includes('Sub20')) categories.push('Sub20')
+  if (selectedOptions.Sottrazioni.includes('Sub100')) categories.push('Sub100')
+  if (selectedOptions.Moltiplicazioni.includes('MultTab')) categories.push('MultTab')
+  if (selectedOptions.Moltiplicazioni.includes('MultNoCarry')) categories.push('MultNoCarry')
+  if (selectedOptions.Moltiplicazioni.includes('MultCarry')) categories.push('MultCarry')
+  if (selectedOptions.Divisioni.includes('DivRow')) categories.push('DivRow')
+  if (selectedOptions.Divisioni.includes('DivCol1')) categories.push('DivCol1')
+  if (selectedOptions.Divisioni.includes('DivCol2')) categories.push('DivCol2')
 
-  const isDuplicate = (expression) => {
-    return extractedOperations.some(op => op.expression === expression);
-  };
-
-  // Verifica delle opzioni per le addizioni
-  if (selectedOptions.Addizioni.includes('Add10')) {
-    let addend1, addend2, expression;
-    do {
-      addend1 = getRandomNumber(1, 9);
-      addend2 = getRandomNumber(1, 10 - addend1); // Somma massima di 10
-      expression = `${addend1} + ${addend2}`;
-    } while (isDuplicate(expression));
-    operations.push({ expression, correctAnswer: addend1 + addend2 });
+  // Se non ci sono categorie selezionate, ritorna un messaggio di errore
+  if (categories.length === 0) {
+    return { expression: 'Nessuna operazione disponibile', correctAnswer: null }
   }
 
-  if (selectedOptions.Addizioni.includes('Add20')) {
-    let addend1, addend2, sum, expression;
-    do {
-      addend1 = getRandomNumber(1, 19);
-      addend2 = getRandomNumber(1, 19);
-      sum = addend1 + addend2;
-      expression = `${addend1} + ${addend2}`;
-    } while (sum < 11 || sum > 20 || isDuplicate(expression)); // Verifica anche il duplicato
-    operations.push({ expression, correctAnswer: sum });
+  // Seleziona casualmente una categoria dalla lista
+  const chosenCategory = categories[Math.floor(Math.random() * categories.length)]
+
+  // Genera l’operazione in base alla categoria scelta
+  let operation = {}
+
+  switch (chosenCategory) {
+    case 'Add10':
+      operation = generateAdd10()
+      break
+    case 'Add20':
+      operation = generateAdd20()
+      break
+    case 'Add100':
+      operation = generateAdd100(selectedOptions)
+      break
+    case 'Sub10':
+      operation = generateSub10()
+      break
+    case 'Sub20':
+      operation = generateSub20()
+      break
+    case 'Sub100':
+      operation = generateSub100()
+      break
+    case 'MultTab':
+      operation = generateMultTab()
+      break
+    case 'MultNoCarry':
+      operation = generateMultNoCarry()
+      break
+    case 'MultCarry':
+      operation = generateMultCarry()
+      break
+    case 'DivRow':
+      operation = generateDivRow()
+      break
+    case 'DivCol1':
+      operation = generateDivCol1()
+      break
+    case 'DivCol2':
+      operation = generateDivCol2()
+      break
   }
 
-  if (selectedOptions.Addizioni.includes('Add100')) {
-    const add100Operation = generateAdd100Operation(selectedOptions);
-    operations.push(add100Operation);
-  }
-
-  if (operations.length > 0) {
-    operation = operations[Math.floor(Math.random() * operations.length)];
-    extractedOperations.push(operation); // Salva l’operazione estratta per evitare duplicati
-  } else {
-    operation = { expression: 'Nessuna operazione disponibile', correctAnswer: null };
-  }
-
-  return operation;
+  // Aggiunge l'operazione estratta alla lista per evitare duplicati
+  extractedOperations.push(operation)
+  return operation
+}
+/*****************************************************************
+ * Addizioni
+ * *********************************/
+// Funzioni per le addizioni
+function generateAdd10() {
+  let addend1, addend2, expression
+  do {
+    addend1 = getRandomNumber(1, 9)
+    addend2 = getRandomNumber(1, 10 - addend1)
+    expression = `${addend1} + ${addend2}`
+  } while (isDuplicate(expression))
+  return { expression, correctAnswer: addend1 + addend2 }
 }
 
-// Funzione helper: Gestisce le addizioni entro 100 con le nuove restrizioni
-function generateAdd100Operation(selectedOptions) {
-  let firstAddend, secondAddend, thirdAddend;
+function generateAdd20() {
+  let addend1, addend2, sum, expression
+  do {
+    addend1 = getRandomNumber(1, 19)
+    addend2 = getRandomNumber(1, 19)
+    sum = addend1 + addend2
+    expression = `${addend1} + ${addend2}`
+  } while (sum < 11 || sum > 20 || isDuplicate(expression))
+  return { expression, correctAnswer: sum }
+}
 
-  // Primo addendo: controlla se deve essere una decina tonda
-  if (selectedOptions.Addizioni.includes('FirstAddendTens')) {
-      firstAddend = generateRoundTens();
-  } else {
-      firstAddend = Math.floor(Math.random() * 99) + 1;
-  }
-
-  // Secondo addendo: controlla se deve essere una decina tonda
-  if (selectedOptions.Addizioni.includes('SecondAddendTens')) {
-      secondAddend = generateRoundTens();
-  } else {
-      secondAddend = Math.floor(Math.random() * (100 - firstAddend)) + 1;
-  }
-
-  // Verifica se è selezionata l'opzione "Tre addendi"
+function generateAdd100(selectedOptions) {
+  // Codice per generare addizioni entro 100 come mostrato in precedenza
+  let addend1 = getRandomNumber(1, 99),
+    addend2 = getRandomNumber(1, 99 - addend1),
+    total
   if (selectedOptions.Addizioni.includes('ThreeAddends')) {
-      // Terzo addendo: controlla se deve essere una decina tonda
-      if (selectedOptions.Addizioni.includes('ThirdAddendTens')) {
-          thirdAddend = generateRoundTens();
-      } else {
-          thirdAddend = Math.floor(Math.random() * (100 - firstAddend - secondAddend)) + 1;
-      }
-
-      // Calcola il totale della somma dei tre addendi
-      const total = firstAddend + secondAddend + thirdAddend;
-
-      // Assicura che il totale sia entro 100
-      if (total > 100) {
-          return generateAdd100Operation(selectedOptions); // Riprova se il totale supera 100
-      }
-
-      // Restituisce un array con l'espressione e il totale per 'ThreeAddends'
-      return { expression: `${firstAddend} + ${secondAddend}+ ${thirdAddend}`, correctAnswer: total };
+    let addend3 = getRandomNumber(1, 100 - addend1 - addend2)
+    total = addend1 + addend2 + addend3
+    return { expression: `${addend1} + ${addend2} + ${addend3}`, correctAnswer: total }
   } else {
-      // Calcola il totale della somma dei due addendi
-      const total = firstAddend + secondAddend;
-
-      // Assicura che il totale sia entro 100
-      if (total > 100) {
-          return generateAdd100Operation(selectedOptions); // Riprova se il totale supera 100
-      }
-
-      // Restituisce un array con l'espressione e il totale per due addendi
-      return { expression: `${firstAddend} + ${secondAddend}`, correctAnswer: total };
+    total = addend1 + addend2
+    return { expression: `${addend1} + ${addend2}`, correctAnswer: total }
   }
 }
 
-// Funzione di supporto per generare una decina tonda casuale (10, 20, ... , 90)
-const generateRoundTens = () => Math.floor(Math.random() * 9 + 1) * 10;
+/*****************************************************************
+ * Sottrzioni
+ * *********************************/
+// Funzioni per le sottrazioni
+function generateSub10() {
+  let minuend, subtrahend, expression
+  do {
+    minuend = getRandomNumber(1, 10)
+    subtrahend = getRandomNumber(1, minuend)
+    expression = `${minuend} - ${subtrahend}`
+  } while (isDuplicate(expression) || minuend - subtrahend === 0)
+  return { expression, correctAnswer: minuend - subtrahend }
+}
+
+function generateSub20() {
+  let minuend, subtrahend, expression
+  do {
+    minuend = getRandomNumber(1, 20)
+    subtrahend = getRandomNumber(1, minuend)
+    expression = `${minuend} - ${subtrahend}`
+  } while (isDuplicate(expression) || minuend - subtrahend === 0)
+  return { expression, correctAnswer: minuend - subtrahend }
+}
+
+function generateSub100() {
+  let minuend, subtrahend, expression
+  do {
+    minuend = getRandomNumber(1, 100)
+    subtrahend = getRandomNumber(1, minuend)
+    expression = `${minuend} - ${subtrahend}`
+  } while (isDuplicate(expression) || minuend - subtrahend === 0)
+  return { expression, correctAnswer: minuend - subtrahend }
+}
+
+/*****************************************************************
+ * Moltiplicazioni
+ * *********************************/
+// Funzioni per le moltiplicazioni
+function generateMultTab() {
+  let factor1, factor2, expression
+  do {
+    factor1 = getRandomNumber(2, 10)
+    factor2 = getRandomNumber(2, 10)
+    expression = `${factor1} × ${factor2}`
+  } while (isDuplicate(expression))
+  return { expression, correctAnswer: factor1 * factor2 }
+}
+
+function generateMultNoCarry() {
+  let factor1, factor2, expression;
+  let tens,units
+  do {
+    // Estrai il moltiplicatore come una cifra
+    factor2 = getRandomNumber(2, 9);
+
+    // Estrai il moltiplicando come un numero di due cifre
+     tens = getRandomNumber(1, 9); // Decine
+     units = getRandomNumber(0, 9); // Unità
+    factor1 = tens * 10 + units;
+
+    // Verifica che il prodotto di ciascuna cifra del moltiplicando con il moltiplicatore sia inferiore a 10
+  } while ((tens * factor2 >= 10) || (units * factor2 >= 10) || isDuplicate(`${factor1} × ${factor2}`));
+
+  expression = `${factor1} × ${factor2}`;
+  return { expression, correctAnswer: factor1 * factor2 };
+}
 
 
-export { generateOperation };
+function generateMultCarry() {
+  let factor1, factor2, expression;
+  let tens,units
+  do {
+    // Estrai il moltiplicatore come una cifra
+    factor2 = getRandomNumber(2, 9);
+
+    // Estrai il moltiplicando come un numero di due cifre
+    tens = getRandomNumber(1, 9); // Decine
+    units = getRandomNumber(0, 9); // Unità
+    factor1 = tens * 10 + units;
+
+    // Verifica che almeno uno dei prodotti sia maggiore o uguale a 10
+  } while ((tens * factor2 < 10) && (units * factor2 < 10) || isDuplicate(`${factor1} × ${factor2}`));
+
+  expression = `${factor1} × ${factor2}`;
+  return { expression, correctAnswer: factor1 * factor2 };
+}
+
+
+/*****************************************************************
+ * Divisioni
+ * *********************************/
+function generateDivRow() {
+  let dividend, divisor, expression
+  do {
+    divisor = getRandomNumber(1, 10)
+    const correctAnswer = getRandomNumber(1, 10)
+    dividend = divisor * correctAnswer // Garantisce che la divisione sia esatta
+    expression = `${dividend} ÷ ${divisor}`
+  } while (isDuplicate(expression))
+  return { expression, correctAnswer: dividend / divisor }
+}
+
+function generateDivCol1() {
+    let divisor, multiple1, multiple2, dividend, expression;
+  
+    do {
+      // Estrazione del divisore tra 2 e 9
+      divisor = getRandomNumber(2, 9);
+  
+      // Estrazione dei due numeri, entrambi devono essere multipli del divisore
+      multiple1 = getRandomNumber(1, 9) * divisor;
+      multiple2 = getRandomNumber(1, 9) * divisor;
+  
+      // Creazione del dividendo unendo i due numeri (decine + unità)
+      dividend = multiple1 * 10 + multiple2;
+  
+      // Verifica che la divisione dividend / divisor sia > 10
+    } while (dividend / divisor <= 10);
+  
+    // Creazione dell'espressione di divisione
+    expression = `${dividend} ÷ ${divisor}`;
+    return { expression, correctAnswer: dividend / divisor };
+  }
+  
+
+
+//divisione che potrebbe avere resto interno
+/*function generateDivCol1() {
+  let dividend, divisor, expression,modulo, alteee,j;
+
+  do {
+    // Il divisore deve essere un numero tra 1 e 9
+    divisor = getRandomNumber(2, 9);
+
+   dividend = getRandomNumber(10, 99);  // Dividendo tra 10 e 99
+
+    // Verifica che il dividendo sia divisibile per il divisore ma che il risultato non sia esatto
+  } while (modulo !== 0 || dividend / divisor <=10);
+
+  expression = `${dividend} ÷ ${divisor}`;
+  return { expression, correctAnswer: dividend / divisor };
+}*/
+
+function generateDivCol2() {
+  let dividend, divisor, expression
+  do {
+    divisor = getRandomNumber(10, 99) // Divisore a due cifre
+    const correctAnswer = getRandomNumber(1, 9)
+    dividend = divisor * correctAnswer // Garantisce divisione esatta
+    expression = `${dividend} ÷ ${divisor}`
+  } while (isDuplicate(expression))
+  return { expression, correctAnswer: dividend / divisor }
+}
+
+export { generateOperation }
