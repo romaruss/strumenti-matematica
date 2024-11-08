@@ -1,0 +1,87 @@
+.config-menu {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    width: 70vw;
+    max-width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: grid;
+    gap: 20px;
+    margin: auto;
+  }
+  
+  .config-title {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  /* Configurazione della griglia */
+  .config-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    width: 100%;
+    gap: 10px;
+  }
+  
+  /* Titoli evidenziati */
+  .highlighted {
+    color: #333;
+    font-weight: bold;
+  }
+  
+  /* Colonne di configurazione */
+  .config-column {
+    padding: 10px;
+    background-color: #f2f2f2;
+    border-radius: 5px;
+  }
+  
+  /* Riga a larghezza intera per altre configurazioni */
+  .config-full-row {
+    grid-column: 1 / -1;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  /* Contenitore per centrare il pulsante Chiudi */
+  .button-center {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  /* Rientro per gli elementi figli */
+  .config-column div {
+    margin-left: 20px;
+  }
+  
+  
+  
+  /* Stile per il bottone di chiusura */
+  .config-menu button {
+    margin-top: 20px;
+    padding: 8px 16px;
+    background-color: #2a9df4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    
+  }
+  
+  .config-menu button:hover {
+    background-color: #2186c4;
+  }
+  
