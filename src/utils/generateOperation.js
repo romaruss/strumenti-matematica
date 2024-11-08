@@ -4,9 +4,9 @@ const extractedOperations = []
 // Genera un numero casuale tra min e max (inclusi), evitando 0
 const getRandomNumber = (min, max) => {
   let num
-  do {
-    num = Math.floor(Math.random() * (max - min + 1)) + min
-  } while (num === 0)
+  //do {
+  num = Math.floor(Math.random() * (max - min + 1)) + min
+  //} while (num === 0)
   return num
 }
 
@@ -30,9 +30,10 @@ function generateOperation(selectedOptions) {
   if (selectedOptions.Moltiplicazioni.includes('MultTab')) categories.push('MultTab')
   if (selectedOptions.Moltiplicazioni.includes('MultNoCarry')) categories.push('MultNoCarry')
   if (selectedOptions.Moltiplicazioni.includes('MultCarry')) categories.push('MultCarry')
-  if (selectedOptions.Divisioni.includes('DivRow')) categories.push('DivRow')
-  if (selectedOptions.Divisioni.includes('DivCol1')) categories.push('DivCol1')
-  if (selectedOptions.Divisioni.includes('DivCol2')) categories.push('DivCol2')
+  if (selectedOptions.Divisioni.includes('DivTabelline')) categories.push('DivTabelline')
+  if (selectedOptions.Divisioni.includes('DivNoResto')) categories.push('DivNoResto')
+  if (selectedOptions.Divisioni.includes('DivResto')) categories.push('DivResto')
+  if (selectedOptions.Divisioni.includes('DivRestoInt')) categories.push('DivRestoInt')
 
   // Se non ci sono categorie selezionate, ritorna un messaggio di errore
   if (categories.length === 0) {
@@ -73,14 +74,17 @@ function generateOperation(selectedOptions) {
     case 'MultCarry':
       operation = generateMultCarry()
       break
-    case 'DivRow':
-      operation = generateDivRow()
+    case 'DivTabelline':
+      operation = generateDivTabelline()
       break
-    case 'DivCol1':
-      operation = generateDivCol1()
+    case 'DivNoResto':
+      operation = generateDivNoResto()
       break
-    case 'DivCol2':
-      operation = generateDivCol2()
+    case 'DivResto':
+      operation = generateDivResto()
+      break
+    case 'DivRestoInt':
+      operation = generateDivRestoInt()
       break
   }
 
@@ -177,49 +181,47 @@ function generateMultTab() {
 }
 
 function generateMultNoCarry() {
-  let factor1, factor2, expression;
-  let tens,units
+  let factor1, factor2, expression
+  let tens, units
   do {
     // Estrai il moltiplicatore come una cifra
-    factor2 = getRandomNumber(2, 9);
+    factor2 = getRandomNumber(2, 9)
 
     // Estrai il moltiplicando come un numero di due cifre
-     tens = getRandomNumber(1, 9); // Decine
-     units = getRandomNumber(0, 9); // Unità
-    factor1 = tens * 10 + units;
+    tens = getRandomNumber(1, 9) // Decine
+    units = getRandomNumber(0, 9) // Unità
+    factor1 = tens * 10 + units
 
     // Verifica che il prodotto di ciascuna cifra del moltiplicando con il moltiplicatore sia inferiore a 10
-  } while ((tens * factor2 >= 10) || (units * factor2 >= 10) || isDuplicate(`${factor1} × ${factor2}`));
+  } while (tens * factor2 >= 10 || units * factor2 >= 10 || isDuplicate(`${factor1} × ${factor2}`))
 
-  expression = `${factor1} × ${factor2}`;
-  return { expression, correctAnswer: factor1 * factor2 };
+  expression = `${factor1} × ${factor2}`
+  return { expression, correctAnswer: factor1 * factor2 }
 }
-
 
 function generateMultCarry() {
-  let factor1, factor2, expression;
-  let tens,units
+  let factor1, factor2, expression
+  let tens, units
   do {
     // Estrai il moltiplicatore come una cifra
-    factor2 = getRandomNumber(2, 9);
+    factor2 = getRandomNumber(2, 9)
 
     // Estrai il moltiplicando come un numero di due cifre
-    tens = getRandomNumber(1, 9); // Decine
-    units = getRandomNumber(0, 9); // Unità
-    factor1 = tens * 10 + units;
+    tens = getRandomNumber(1, 9) // Decine
+    units = getRandomNumber(0, 9) // Unità
+    factor1 = tens * 10 + units
 
     // Verifica che almeno uno dei prodotti sia maggiore o uguale a 10
-  } while ((tens * factor2 < 10) && (units * factor2 < 10) || isDuplicate(`${factor1} × ${factor2}`));
+  } while ((tens * factor2 < 10 && units * factor2 < 10) || isDuplicate(`${factor1} × ${factor2}`))
 
-  expression = `${factor1} × ${factor2}`;
-  return { expression, correctAnswer: factor1 * factor2 };
+  expression = `${factor1} × ${factor2}`
+  return { expression, correctAnswer: factor1 * factor2 }
 }
-
 
 /*****************************************************************
  * Divisioni
  * *********************************/
-function generateDivRow() {
+function generateDivTabelline() {
   let dividend, divisor, expression
   do {
     divisor = getRandomNumber(1, 10)
@@ -230,56 +232,111 @@ function generateDivRow() {
   return { expression, correctAnswer: dividend / divisor }
 }
 
-function generateDivCol1() {
-    let divisor, multiple1, multiple2, dividend, expression;
-  
+function generateDivNoResto() {
+  let divisor, multiple1, multiple2, dividend, expression
+  do {
     do {
       // Estrazione del divisore tra 2 e 9
-      divisor = getRandomNumber(2, 9);
-  
+      divisor = getRandomNumber(2, 9)
+
       // Estrazione dei due numeri, entrambi devono essere multipli del divisore
-      multiple1 = getRandomNumber(1, 9) * divisor;
-      multiple2 = getRandomNumber(1, 9) * divisor;
-  
+
+      do {
+        multiple1 = getRandomNumber(1, 9) * divisor
+      } while (multiple1 >= 10)
+
+      do {
+        multiple2 = getRandomNumber(1, 9) * divisor
+      } while (multiple2 >= 10)
+
       // Creazione del dividendo unendo i due numeri (decine + unità)
-      dividend = multiple1 * 10 + multiple2;
-  
+      dividend = multiple1 * 10 + multiple2
+
       // Verifica che la divisione dividend / divisor sia > 10
-    } while (dividend / divisor <= 10);
-  
+    } while (dividend / divisor <= 10)
+
     // Creazione dell'espressione di divisione
-    expression = `${dividend} ÷ ${divisor}`;
-    return { expression, correctAnswer: dividend / divisor };
-  }
-  
-
-
-//divisione che potrebbe avere resto interno
-/*function generateDivCol1() {
-  let dividend, divisor, expression,modulo, alteee,j;
-
-  do {
-    // Il divisore deve essere un numero tra 1 e 9
-    divisor = getRandomNumber(2, 9);
-
-   dividend = getRandomNumber(10, 99);  // Dividendo tra 10 e 99
-
-    // Verifica che il dividendo sia divisibile per il divisore ma che il risultato non sia esatto
-  } while (modulo !== 0 || dividend / divisor <=10);
-
-  expression = `${dividend} ÷ ${divisor}`;
-  return { expression, correctAnswer: dividend / divisor };
-}*/
-
-function generateDivCol2() {
-  let dividend, divisor, expression
-  do {
-    divisor = getRandomNumber(10, 99) // Divisore a due cifre
-    const correctAnswer = getRandomNumber(1, 9)
-    dividend = divisor * correctAnswer // Garantisce divisione esatta
     expression = `${dividend} ÷ ${divisor}`
   } while (isDuplicate(expression))
   return { expression, correctAnswer: dividend / divisor }
 }
+
+function generateDivResto() {
+  let divisor, multiple1, multiple2, dividend, expression, dividendNoResto, resto
+  do {
+    do {
+      // Estrazione del divisore tra 2 e 9
+      divisor = getRandomNumber(2, 9)
+
+      // Estrazione dei due numeri, entrambi devono essere multipli del divisore
+
+      do {
+        multiple1 = getRandomNumber(1, 9) * divisor
+      } while (multiple1 >= 10)
+
+      do {
+        multiple2 = getRandomNumber(0, 9) * divisor
+      } while (multiple2 >= 9)
+
+      // Creazione del dividendo unendo i due numeri (decine + unità)
+      do {
+        resto = getRandomNumber(1, divisor)
+      } while (resto + multiple2 >= 10)
+
+      dividend = multiple1 * 10 + multiple2 + resto
+      dividendNoResto = multiple1 * 10 + multiple2
+
+      // Verifica che la divisione dividend / divisor sia > 10
+    } while (dividend / divisor <= 10)
+
+    // Creazione dell'espressione di divisione
+    expression = `${dividend} ÷ ${divisor}`
+  } while (isDuplicate(expression))
+  return { expression, correctAnswer: `${dividendNoResto / divisor} + ${resto}` }
+}
+
+/**
+ * Generates a division operation with an integer remainder.
+ * The dividend is a two-digit number formed by combining two multiples of the divisor,
+ * and the remainder is a number that, when added to the first multiple, results in a number that is divisible by the divisor.
+ *
+ * @returns {Object} An object containing the expression and the correct answer.
+ * @property {string} expression - The division operation as a string.
+ * @property {string} correctAnswer - The correct answer as a string.
+ */
+function generateDivRestoInt() {
+  let divisor, multiple1, multiple2, dividend, expression, resto
+  do {
+    do {
+      // Estrazione del divisore tra 2 e 9
+      divisor = getRandomNumber(2, 8)
+
+      // Estrazione dei due numeri, entrambi devono essere multipli del divisore
+
+      do {
+        multiple1 = getRandomNumber(1, 9) * divisor
+      } while (multiple1 >= 9)
+
+      do {
+        resto = getRandomNumber(1, divisor)
+      } while (resto + multiple1 >= 10)
+
+      do {
+        multiple2 = getRandomNumber(0, 9)
+      } while ((resto * 10 + multiple2) % divisor > 0)
+
+      // Creazione del dividendo unendo i due numeri (decine + unità)
+
+      dividend = (multiple1 + resto) * 10 + multiple2
+
+      // Verifica che la divisione dividend / divisor sia > 10
+    } while (dividend / divisor <= 10)
+
+    // Creazione dell'espressione di divisione
+    expression = `${dividend} ÷ ${divisor}`
+  } while (isDuplicate(expression))
+  return { expression, correctAnswer: `${dividend / divisor}` }
+}
+
 
 export { generateOperation }

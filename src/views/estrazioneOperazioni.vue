@@ -206,9 +206,10 @@ export default {
         { name: 'MultCarry', label: 'Moltiplicazioni con riporto' }
       ],
       Divisioni: [
-        { name: 'DivRow', label: 'Divisioni in riga' },
-        { name: 'DivCol1', label: 'Divisioni in colonna con una cifra' },
-        { name: 'DivCol2', label: 'Divisioni in colonna con due cifre' }
+        { name: 'DivTabelline', label: 'Divisioni delle tabelline' },
+        { name: 'DivNoResto', label: 'Divisioni in riga senza resto' },
+        { name: 'DivResto', label: 'Divisioni in riga con resto' },
+        { name: 'DivRestoInt', label: 'Divisioni in riga con resto interno' }
       ]
     });
 
