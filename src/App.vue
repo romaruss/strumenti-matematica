@@ -4,8 +4,8 @@
       <AppNavbar :isScrolled="isScrolled" />
       <div class="content-container">
           <main class="main-content" :class="{ 'scrolled': isScrolled }">
-              <h2>Benvenuto su Strumenti Matematici</h2>
-              <p>Qui trovi strumenti matematici utili per studenti e insegnanti.</p>
+              <!--<h2>Benvenuto su Strumenti Matematici</h2>
+              <p>Qui trovi strumenti matematici utili per studenti e insegnanti.</p>-->
               <RouterView />
           </main>
           
