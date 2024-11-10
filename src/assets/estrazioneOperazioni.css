@@ -44,6 +44,12 @@ button {
   top: 10px; /* Distanza dall'alto */
   right: 20px; /* Distanza da destra */
 }
+.config-button:disabled {
+  background-color: #d3d3d3; /* Grigio chiaro */
+  color: #888888; /* Grigio scuro per il testo */
+  cursor: not-allowed; /* Cambia il cursore a 'non consentito' */
+  opacity: 0.6; /* Riduce l'opacità per dare un effetto "disabilitato" */
+}
 
 /* Parte centrale */
 /* Stile per lo slider del timer */
@@ -71,6 +77,23 @@ input[type='range'] {
   margin: 10px 0;
 }
 
+.input-container {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  margin-left: 10px; /* Spazio tra input e bottone */
+}
+
+#answer-input {
+  border: 2px solid blue; /* Bordo blu */
+  padding: 8px;
+  border-radius: 5px 0 0 5px;
+  outline: none;
+  flex: 1;
+  margin-top: 20px;
+  margin-right: 20px; /* Spazio tra input e bottone */
+}
+
 /* Pulsanti di inizio e stop */
 button {
   padding: 10px 20px;
@@ -88,7 +111,14 @@ button:hover {
 /* Progresso e barra del tempo */
 .progress-area {
   margin-top: 20px;
-  text-align: center;
+  position: relative;
+  width: 100%;
+  height: 80px; /* Altezza aumentata per ospitare .progress-indicator sotto la barra del tempo */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 5px; /* Spaziatura tra .time-bar e .progress-indicator */
+  padding: 5px 0; /* Spazio interno per una migliore distribuzione */
 }
 
 .time-bar {

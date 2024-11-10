@@ -14,6 +14,12 @@ const router = createRouter({
       name: 'estrazioneOperazioni',
       component: () => import('@/views/estrazioneOperazioni.vue')
       
+    },
+    {
+      path: '/numeriArmadio100',
+      name: 'numeriArmadio100',
+      component: () => import('@/views/numeriArmadio100.vue')
+      
     }
   ]
 })

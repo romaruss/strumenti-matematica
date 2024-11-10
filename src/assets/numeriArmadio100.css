@@ -1,0 +1,163 @@
+/* Griglia della main area */
+.main-area {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Zona a sinistra */
+.left-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Zona centrale: la griglia dei pallini */
+.center-panel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+/* Griglia dei pallini */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(10, 30px);
+  grid-template-rows: repeat(10, 30px);
+  gap: 5px;
+}
+
+.dot {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: green;
+  cursor: pointer;
+}
+
+.dot.red {
+  background-color: red;
+  color: white;
+  border: 2px solid #b00;
+}
+
+/* Zona a destra: Bottone Configura */
+.right-panel {
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
+}
+
+/* Pannello di configurazione */
+.config-panel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Bottone di configurazione */
+.config-button {
+  padding: 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.config-button:disabled {
+  background-color: #dcdcdc;
+  cursor: not-allowed;
+}
+
+button {
+  padding: 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+button:disabled {
+  background-color: #dcdcdc;
+  cursor: not-allowed;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.progress-area {
+  margin-top: 20px;
+  position: relative;
+  width: 100%;
+  height: 80px; /* Altezza aumentata per ospitare .progress-indicator sotto la barra del tempo */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 5px; /* Spaziatura tra .time-bar e .progress-indicator */
+  padding: 5px 0; /* Spazio interno per una migliore distribuzione */
+}
+
+.time-bar {
+  width: 100%;
+  height: 20px;
+  background-color: green;
+  transition: width 1s linear; /* Anima il cambiamento di larghezza */
+  position: relative; /* Assicura che la barra rimanga all'interno di .progress-area */
+}
+
+.progress-indicator {
+  display: flex;
+  margin-top: 5px; /* Ridotto per evitare margini esterni e mantenere all'interno di .progress-area */
+  gap: 5px; /* Spaziatura tra gli indicatori */
+  justify-content: center;
+}
+
+
+.progress-indicator span {
+  width: 20px;
+  height: 20px;
+  background-color: blue;
+  border-radius: 50%;
+  display: inline-block;
+  
+}
+
+/* Indicatori di stato */
+.pending {
+  background-color: gray;
+}
+
+.complete {
+  background-color: green;
+}
+
+.incomplete {
+  background-color: orange;
+}
+
+
+.no-transition {
+  transition: none;
+}
+
+.smooth-transition {
+  transition: width 1s linear; /* Anima il cambiamento di larghezza */
+}

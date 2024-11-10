@@ -280,7 +280,7 @@ function generateDivResto() {
 
       // Creazione del dividendo unendo i due numeri (decine + unità)
       do {
-        resto = getRandomNumber(1, divisor)
+        resto = getRandomNumber(1, (divisor-1))
       } while (resto + multiple2 >= 10)
 
       dividend = multiple1 * 10 + multiple2 + resto
@@ -318,7 +318,7 @@ function generateDivRestoInt() {
       } while (multiple1 >= 9)
 
       do {
-        resto = getRandomNumber(1, divisor)
+        resto = getRandomNumber(1, (divisor-1))
       } while (resto + multiple1 >= 10)
 
       do {

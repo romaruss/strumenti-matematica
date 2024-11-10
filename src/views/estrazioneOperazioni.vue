@@ -78,7 +78,7 @@
 
     <!-- Parte 2: Parte centrale -->
     <div class="main-area">
-      <button @click="toggleConfig" class="config-button">Configurazione</button>
+      <button @click="toggleConfig" class="config-button" :disabled="gameStarted">Configurazione</button>
       <h2>Operazioni</h2>
       <div class="summary">
         <div v-for="(options, key) in selectedOptions" :key="key">
@@ -88,7 +88,7 @@
 
       <!-- Timer di gioco -->
       <label>Timer di gioco</label>
-      <input type="range" v-model="gameTimer" min="1" max="30" class="timer-slider" />
+      <input type="range" v-model="gameTimer" min="1" max="30" class="timer-slider" :disabled="gameStarted"/>
       <span>{{ gameTimer }} secondi</span> <!-- Visualizza il valore selezionato -->
       <!-- fine timer di gioco-->
 
@@ -99,7 +99,13 @@
       <!-- Area per le operazioni estratte -->
       <div v-if="gameStarted" class="operation-display">
         <h1>{{ currentOperation.expression }}</h1>
-        <input v-if="digitalAnswer" v-model="userAnswer" @keyup.enter="submitAnswer" type="text" />
+        
+        <div class="input-container" v-if="digitalAnswer">
+          <!--<label for="answer-input">Inserisci il risultato</label>-->
+          <input id='answer-input' v-model="userAnswer" @keyup.enter="submitAnswer" type="text" placeholder="Inserisci il risultato" />
+          <button @click="submitAnswer" :disabled="!userAnswer">Invio</button>
+        </div>
+
 
       </div>
     </div>
@@ -224,7 +230,7 @@ export default {
     const enableSound = ref(false);
     const operationsCount = ref(5);
     const digitalAnswer = ref(false);
-    
+
     const gameStarted = ref(false);
     const showResults = ref(false);
     const currentOperation = ref(null);
@@ -295,13 +301,16 @@ export default {
       currentOperation.value = operation;
       userAnswer.value = ''; // Resetta la risposta per ogni nuova operazione
       startTimer(); // Avvia il timer per la nuova operazione
+      if (enableSound.value) { // Controlla se l'opzione del suono è attivata
+        playSound();
+      }
     };
 
     // Funzione per inviare e valutare la risposta
     const submitAnswer = () => {
       clearInterval(timerInterval.value); // Ferma il timer corrente
 
-      if (parseInt(userAnswer.value) === currentOperation.value.correctAnswer) {
+      if (userAnswer.value.replace(/\s+/g, '').trim() === currentOperation.value.correctAnswer.replace(/\s+/g, '').trim()) {
         // Risposta corretta
         progressArray.value[extractedOperations.value.length - 1] = 'correct';
       } else {
@@ -370,7 +379,14 @@ export default {
       progressArray.value[extractedOperations.value.length - 1] = 'incomplete'; // Segna l'operazione come non risolta
       nextOperation(); // Procede con una nuova operazione
     };
-
+    const playSound = () => {
+      try {
+        const audio = new Audio('/campanella.mp3');
+        audio.play();
+      } catch (error) {
+        console.error("Errore durante la riproduzione del suono:", error);
+      }
+    };
     return {
       showConfig,
       selectedOptions,
