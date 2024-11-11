@@ -88,7 +88,7 @@
 
       <!-- Timer di gioco -->
       <label>Timer di gioco</label>
-      <input type="range" v-model="gameTimer" min="1" max="30" class="timer-slider" :disabled="gameStarted"/>
+      <input type="range" v-model="gameTimer" min="1" max="30" class="timer-slider" :disabled="gameStarted" />
       <span>{{ gameTimer }} secondi</span> <!-- Visualizza il valore selezionato -->
       <!-- fine timer di gioco-->
 
@@ -99,10 +99,11 @@
       <!-- Area per le operazioni estratte -->
       <div v-if="gameStarted" class="operation-display">
         <h1>{{ currentOperation.expression }}</h1>
-        
+
         <div class="input-container" v-if="digitalAnswer">
           <!--<label for="answer-input">Inserisci il risultato</label>-->
-          <input id='answer-input' v-model="userAnswer" @keyup.enter="submitAnswer" type="text" placeholder="Inserisci il risultato" />
+          <input id='answer-input' v-model="userAnswer" @keyup.enter="submitAnswer" type="text"
+            placeholder="Inserisci il risultato" />
           <button @click="submitAnswer" :disabled="!userAnswer">Invio</button>
         </div>
 
@@ -354,23 +355,25 @@ export default {
 
     // Funzione per avviare il timer
     const startTimer = () => {
-      timer.value = gameTimer.value;
+      timer.value = gameTimer.value*2 ;
       clearInterval(timerInterval); // Clear previous timer if exists
       timeBarWidth.value = 100;
       timerClass.value = 'no-transition'; // Rendi il ripristino istantaneo
 
       setTimeout(() => {
         timerClass.value = 'smooth-transition'; // Riabilita l'animazione
-      }, 1000); // 20ms per permettere il cambio di classe
+      }, 20); // 20ms per permettere il cambio di classe
 
       timerInterval = setInterval(() => {
-        timeBarWidth.value -= (100 / gameTimer.value); // Riduci la larghezza in base al tempo
-        if (timer.value > 0) {
-          timer.value--;
-        } else {
-          handleTimerExpiration(); // Timer expired
+        if (gameStarted.value==true) {
+          timeBarWidth.value -= (50 / gameTimer.value); // Riduci la larghezza in base al tempo
+          if (timer.value > 0) {
+            timer.value--;
+          } else {
+            handleTimerExpiration(); // Timer expired
+          }
         }
-      }, 1000);
+      }, 500);
     };
 
     // Funzione per gestire la scadenza del timer
