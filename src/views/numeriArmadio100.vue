@@ -28,9 +28,11 @@
                 <span>{{ gameTimer }} secondi</span>
 
                 <!-- Bottone Inizia / Stop -->
-                <button @click="startGame" v-if="!gameStarted">Inizia</button>
+                <button @click="startGame" v-if="!gameStarted && !showResultsButton">Inizia</button>
 
                 <button @click="stopGame" v-if="gameStarted">Stop</button>
+                <button @click="restartGame" v-if="!gameStarted && showResultsButton">Restart</button>
+
             </div>
 
             <div class="center-panel">
@@ -49,19 +51,16 @@
 
             </div>
         </div>
-        
+
         <!-- Barra del tempo e progresso -->
         <div class="progress-area">
-            
+
             <div class="time-bar" :class="timerClass" :style="{ width: timeBarWidth + '%' }"></div>
             <div class="progress-indicator">
                 <span v-for="(status, index) in progressArray" :key="index" :class="status"></span>
             </div>
-            
+
         </div>
-
-
-
 
         <!-- Risultati -->
         <div v-if="showResultsButton" class="results">
@@ -91,7 +90,7 @@ export default {
         const gameStarted = ref(false);
         const timeBarWidth = ref(100);
         const totalDots = reactive(Array.from({ length: 100 }, () => ({ isRed: false })));
-        const progressArray = ref([]);
+        const progressArray = ref(Array(selectedDotCount.value).fill('pending'));
         const resultsMessage = ref("");
         const timerInterval = ref(null);
         // Aggiungi queste variabili nella parte di setup
@@ -153,7 +152,7 @@ export default {
 
 
         };
- 
+
         const startTimer = () => {
             timer.value = gameTimer.value // Imposta il timer in base al tempo e pallini
             clearInterval(timerInterval.value); // Ferma il timer precedente se esiste
@@ -193,24 +192,29 @@ export default {
             showResultsButton.value = true;
         };
 
+
         // Funzione per riavviare il gioco
         const restartGame = () => {
             totalDots.forEach(dot => dot.isRed = false);
-            progressArray.value = [];
+            //progressArray.value = Array(selectedDotCount.value).fill('pending');
+            progressArray.value = Array(7).fill('pending');
             timeBarWidth.value = 100;
-            showResults.value = false;
-            startGame();
+            showResultsButton.value = false;
+            //startGame(); 
         };
-        
+
         // Salva le impostazioni nel localStorage
         watch([selectedDotCount, enableSound, gameTimer], () => {
-            localStorage.setItem('selectedDotCount', selectedDotCount.value);
+            progressArray.value=Array(selectedDotCount.value).fill('pending') 
+            localStorage.setItem('selectedDotCount', selectedDotCount.value);            
             localStorage.setItem('enableSound', enableSound.value);
             localStorage.setItem('gameTimer', gameTimer.value);
         });
 
 
+
         return {
+
             showConfig,
             enableSound,
             selectedDotCount,
@@ -226,7 +230,7 @@ export default {
             restartGame,
             toggleConfig,
             showResultsButton,
-            timerClass
+            timerClass,
         };
     }
 };
