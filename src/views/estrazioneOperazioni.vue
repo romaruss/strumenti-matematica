@@ -422,5 +422,6 @@ export default {
 };
 </script>
 
-<style src="@/assets/estrazioneOperazioni.css"></style>
-<style src="@/assets/estrazioneOperazioni-pannello.css"></style>
+<style scoped src="@/assets/estrazioneOperazioni.css"></style>
+<style scoped src="@/assets/estrazioneOperazioni-pannello.css"></style>
+<style  src="@/assets/comune.css"></style>
