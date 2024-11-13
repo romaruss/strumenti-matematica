@@ -422,7 +422,9 @@ export default {
 };
 </script>
 
-<style  src="@/assets/comune.css"></style>
+<style >
+  @import "@/assets/comune.css";
+</style>
 
 <style scoped>
 /* Importa i file CSS esterni */
