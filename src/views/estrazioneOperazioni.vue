@@ -229,6 +229,7 @@ export default {
     });
 
     const enableSound = ref(false);
+    //const operationsCount = ref(localStorage.config.operationsCount.value || 5);
     const operationsCount = ref(5);
     const digitalAnswer = ref(false);
 
@@ -237,7 +238,7 @@ export default {
     const currentOperation = ref(null);
     const extractedOperations = ref([]);
     const userAnswer = ref('');
-    const progressArray = ref([]);
+    const progressArray= ref(Array(parseInt(operationsCount.value)).fill('pending'));
     const timeBarWidth = ref(100);
 
     const timer = ref(0); // Tracks current countdown for each operation
@@ -246,6 +247,7 @@ export default {
 
     const toggleConfig = () => {
       showConfig.value = !showConfig.value;
+      progressArray.value = Array(parseInt(operationsCount.value)).fill('pending');
       saveConfig();
     };
 
@@ -277,7 +279,7 @@ export default {
       gameStarted.value = true;
       showResults.value = false;
       extractedOperations.value = [];
-      progressArray.value = Array(operationsCount.value).fill('blue'); // Imposta i pallini come "non completati"
+      //progressArray.value = Array(parseInt(operationsCount.value)).fill('pending'); // Imposta i pallini come "non completati"
 
       generateOperationWrapper(); // Estrai immediatamente la prima operazione
 
@@ -297,21 +299,73 @@ export default {
     };
 
     const generateOperationWrapper = () => {
-      const operation = generateOperation(selectedOptions); // Funzione che crea l'operazione
-      extractedOperations.value.push(operation);
-      currentOperation.value = operation;
-      userAnswer.value = ''; // Resetta la risposta per ogni nuova operazione
-      startTimer(); // Avvia il timer per la nuova operazione
-      if (enableSound.value) { // Controlla se l'opzione del suono è attivata
-        playSound();
+
+
+      if (extractedOperations.value.length < operationsCount.value) {
+        // Genera la prossima operazione
+        const operation = generateOperation(selectedOptions); // Funzione che crea l'operazione
+        progressArray.value[extractedOperations.value.length]='active';
+        extractedOperations.value.push(operation);
+        currentOperation.value = operation;
+        userAnswer.value = ''; // Resetta la risposta per ogni nuova operazione
+        startTimer(); // Avvia il timer per la nuova operazione
+        if (enableSound.value) { // Controlla se l'opzione del suono è attivata
+          playSound();
+        }
+      } else {
+        endGame(); // Termina il gioco se non ci sono più operazioni da estrarre
       }
+
+    };
+
+
+    // Funzione per avviare il timer
+    const startTimer = () => {
+      timer.value = gameTimer.value;
+      clearInterval(timerIntervalEO); // Clear previous timer if exists
+      timeBarWidth.value = 100;
+      timerClass.value = 'no-transition'; // Rendi il ripristino istantaneo
+
+      setTimeout(() => {
+        timerClass.value = 'smooth-transition'; // Riabilita l'animazione
+      }, 20); // 20ms per permettere il cambio di classe
+
+      timerIntervalEO = setInterval(() => {
+        if (gameStarted.value == true) {
+          timeBarWidth.value -= (100 / gameTimer.value); // Riduci la larghezza in base al tempo
+          if (timer.value > 0) {
+            timer.value--;
+          } else {
+            //handleTimerExpiration(); // Timer expired
+            progressArray.value[extractedOperations.value.length - 1] = 'incomplete';
+            generateOperationWrapper();
+          }
+        }
+      }, 500);
     };
 
     // Funzione per inviare e valutare la risposta
     const submitAnswer = () => {
       clearInterval(timerIntervalEO.value); // Ferma il timer corrente
+      let correctAnswerFormatted;
+      let userAnswerFormatted;
+      //pulisce eventuali spazi dalle risposte
+      if (typeof currentOperation.value.correctAnswer === 'string') {
+        correctAnswerFormatted = currentOperation.value.correctAnswer.replace(",", ".").trim;
+      }
+      else{
+        correctAnswerFormatted=currentOperation.value.correctAnswer
+      }
 
-      if (userAnswer.value.replace(/\s+/g, '').trim() === currentOperation.value.correctAnswer.replace(/\s+/g, '').trim()) {
+      if (typeof userAnswer.value === 'string') {
+        userAnswerFormatted = userAnswer.value.replace(",", ".").trim;
+      }
+      else{
+        userAnswerFormatted=userAnswer.value
+      }
+
+
+      if (userAnswerFormatted.value === correctAnswerFormatted.value) {
         // Risposta corretta
         progressArray.value[extractedOperations.value.length - 1] = 'correct';
       } else {
@@ -319,21 +373,13 @@ export default {
         progressArray.value[extractedOperations.value.length - 1] = 'incorrect';
       }
 
-      nextOperation(); // Procede con una nuova operazione
+      generateOperationWrapper(); // Procede con una nuova operazione
     };
 
-    // Funzione per gestire la prossima operazione
-    const nextOperation = () => {
-      if (extractedOperations.value.length < operationsCount.value) {
-        generateOperationWrapper(); // Genera la prossima operazione
-      } else {
-        endGame(); // Termina il gioco se non ci sono più operazioni da estrarre
-      }
-    };
 
     // Pulisce il timer quando il componente viene smontato
     onBeforeUnmount(() => {
-      if (timerIntervalEO!== null) {
+      if (timerIntervalEO !== null) {
         clearInterval(timerIntervalEO.value);
       }
     });
@@ -353,43 +399,7 @@ export default {
 
     const timerClass = ref(''); // Gestirà l'animazione della barra
 
-    // Funzione per avviare il timer
-    const startTimer = () => {
-      timer.value = gameTimer.value*2 ;
-      clearInterval(timerIntervalEO); // Clear previous timer if exists
-      timeBarWidth.value = 100;
-      timerClass.value = 'no-transition'; // Rendi il ripristino istantaneo
 
-      setTimeout(() => {
-        timerClass.value = 'smooth-transition'; // Riabilita l'animazione
-      }, 20); // 20ms per permettere il cambio di classe
-
-      timerIntervalEO = setInterval(() => {
-        if (gameStarted.value==true) {
-          timeBarWidth.value -= (50 / gameTimer.value); // Riduci la larghezza in base al tempo
-          if (timer.value > 0) {
-            timer.value--;
-          } else {
-            handleTimerExpiration(); // Timer expired
-          }
-        }
-      }, 500);
-    };
-
-    // Funzione per gestire la scadenza del timer
-    const handleTimerExpiration = () => {
-      clearInterval(timerIntervalEO.value); // Ferma il timer
-      progressArray.value[extractedOperations.value.length - 1] = 'incomplete'; // Segna l'operazione come non risolta
-      nextOperation(); // Procede con una nuova operazione
-    };
-    const playSound = () => {
-      try {
-        const audio = new Audio('/campanella.mp3');
-        audio.play();
-      } catch (error) {
-        console.error("Errore durante la riproduzione del suono:", error);
-      }
-    };
     return {
       showConfig,
       selectedOptions,
@@ -422,13 +432,12 @@ export default {
 };
 </script>
 
-<style >
-  @import "@/assets/comune.css";
+<style>
+@import "@/assets/comune.css";
 </style>
 
 <style scoped>
 /* Importa i file CSS esterni */
 @import "@/assets/estrazioneOperazioni.css";
 @import "@/assets/estrazioneOperazioni-pannello.css";
-
 </style>

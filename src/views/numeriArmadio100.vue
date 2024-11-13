@@ -96,7 +96,7 @@ export default {
         // Aggiungi queste variabili nella parte di setup
         const timer = ref(0); // Tempo rimanente del timer
         const timerClass = ref(''); // Classe per gestire l'animazione della barra
-        const numeroEstratto = ref(null);
+        const numeroEstratto = ref(-1);
 
         const showResults = () => {
             resultsMessage.value = "Numeri estratti: " + extractedDots.value.map(num => num + 1).join(", ");     // Mostra i numeri estratti
@@ -127,6 +127,7 @@ export default {
             resultsMessage.value = "";
             totalDots.forEach(dot => dot.isRed = false); // Reset alla griglia (tutti i pallini verdi)
             extractedDots.value = [];  // Pulisci gli estratti precedenti
+            resultShown.value=false;
             gameCycle();
         };
 
@@ -134,9 +135,10 @@ export default {
 
             //controlla se sono finiti i pallini da estrarre
             if (extractedDots.value.length < parseInt(selectedDotCount.value)) {
-                if (numeroEstratto.value) {
+                if (numeroEstratto.value>=0) {
                     totalDots[numeroEstratto.value].isRed = false; ////resetta il pallino precedente
                 }
+
                 numeroEstratto.value = extractDot(); ////estrae un pallino
                 totalDots[numeroEstratto.value].isRed = true; ////colora il pallino di rosso
                 progressArray.value[extractedDots.value.length - 1] = 'incomplete'; // Fa avanzare la barra dei progressi
@@ -210,6 +212,8 @@ export default {
             //progressArray.value = Array(7).fill('pending');
             timeBarWidth.value = 100;
             showResultsButton.value = false;
+            resultShown.value=false;
+
             //startGame(); 
         };
 
