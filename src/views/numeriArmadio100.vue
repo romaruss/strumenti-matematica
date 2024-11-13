@@ -249,12 +249,12 @@ export default {
 </script>
 
 
-<!--<style  scoped src="@/assets/numeriArmadio100.css"></style>
+<style>
     @import "@/assets/comune.css";
 </style>
--->
+<!--
 <style scoped>
 /* Importa i file CSS esterni */
 @import "@/assets/numeriArmadio100.css";
 
-</style>
+</style>-->

@@ -421,14 +421,15 @@ export default {
   }
 };
 </script>
-<!--
+
 <style >
   @import "@/assets/comune.css";
 </style>
--->
+<!--
 <style scoped>
 /* Importa i file CSS esterni */
 @import "@/assets/estrazioneOperazioni.css";
 @import "@/assets/estrazioneOperazioni-pannello.css";
 
 </style>
+-->
