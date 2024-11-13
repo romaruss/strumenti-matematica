@@ -39,7 +39,7 @@
                 <!-- Griglia di pallini -->
                 <div id="grid" class="grid">
                     <div v-for="(dot, index) in totalDots" :key="index" :class="['dot', { 'red': dot.isRed }]">
-                        <span v-if="dot.isRed">{{ index }}</span> <!-- Mostra l'indice all'interno del pallino rosso -->
+                        <span v-if="dot.isRed && resultShown">{{ index }}</span> <!-- Mostra l'indice all'interno del pallino rosso -->
                     </div>
 
                 </div>
@@ -63,9 +63,8 @@
         </div>
 
         <!-- Risultati -->
-        <div v-if="showResultsButton" class="results">
-            <h3>Risultati</h3>
-            <div>{{ resultsMessage }}</div>
+        <div v-if="showResultsButton" class="results-container">
+            <div class="results-message">{{ resultsMessage }}</div>
             <button @click="showResults">Visualizza Risultati</button>
         </div>
 
@@ -86,13 +85,14 @@ export default {
         const selectedDotCount = ref(parseInt(localStorage.getItem('selectedDotCount')) || 5);
         const extractedDots = ref([]);  // Array per memorizzare gli indici dei pallini estratti
         const showResultsButton = ref(false);
+        const resultShown = ref(false);
         const gameTimer = ref(parseInt(localStorage.getItem('gameTimer')) || 3);
         const gameStarted = ref(false);
         const timeBarWidth = ref(100);
         const totalDots = reactive(Array.from({ length: 100 }, () => ({ isRed: false })));
         const progressArray = ref(Array(selectedDotCount.value).fill('pending'));
         const resultsMessage = ref("");
-        const timerInterval = ref(null);
+        const timerIntervalAC = ref(null);
         // Aggiungi queste variabili nella parte di setup
         const timer = ref(0); // Tempo rimanente del timer
         const timerClass = ref(''); // Classe per gestire l'animazione della barra
@@ -103,12 +103,19 @@ export default {
             // Colora i pallini estratti di rosso
             extractedDots.value.forEach(index => {
                 totalDots[index].isRed = true;  // Colora i pallini estratti
+                
             });
+            resultShown.value=true;
         };
 
         // Funzione per alternare la visibilità del pannello di configurazione
         const toggleConfig = () => {
             showConfig.value = !showConfig.value;
+           
+            progressArray.value=Array(selectedDotCount.value).fill('pending') 
+
+            saveconfig();
+
         };
 
         // Funzione per avviare il gioco
@@ -155,7 +162,7 @@ export default {
 
         const startTimer = () => {
             timer.value = gameTimer.value // Imposta il timer in base al tempo e pallini
-            clearInterval(timerInterval.value); // Ferma il timer precedente se esiste
+            clearInterval(timerIntervalAC.value); // Ferma il timer precedente se esiste
 
             //gestione barra
             timeBarWidth.value = 100; // Ripristina la larghezza della barra a 100
@@ -167,7 +174,7 @@ export default {
             }, 20); // Ritardo per cambiare classe (per evitare transizione istantanea)
 
             //gestione timeout
-            timerInterval.value = setInterval(() => {
+            timerIntervalAC.value = setInterval(() => {
                 timeBarWidth.value -= (100 / (gameTimer.value)); // Riduce la larghezza della barra
                 if (timer.value > 0) {
                     timer.value--;
@@ -187,7 +194,7 @@ export default {
 
         // Funzione per fermare il gioco
         const stopGame = () => {
-            clearInterval(timerInterval.value);
+            clearInterval(timerIntervalAC.value);
             gameStarted.value = false;
             showResultsButton.value = true;
         };
@@ -204,12 +211,20 @@ export default {
         };
 
         // Salva le impostazioni nel localStorage
-        watch([selectedDotCount, enableSound, gameTimer], () => {
+        /*watch([selectedDotCount, enableSound, gameTimer], () => {
             progressArray.value=Array(selectedDotCount.value).fill('pending') 
             localStorage.setItem('selectedDotCount', selectedDotCount.value);            
             localStorage.setItem('enableSound', enableSound.value);
             localStorage.setItem('gameTimer', gameTimer.value);
-        });
+        });*/
+
+        const saveconfig= () =>{
+
+            localStorage.setItem('selectedDotCount', selectedDotCount.value); 
+            localStorage.setItem('enableSound', enableSound.value);
+            localStorage.setItem('gameTimer', gameTimer.value);
+
+        }
 
 
 
@@ -231,6 +246,7 @@ export default {
             toggleConfig,
             showResultsButton,
             timerClass,
+            resultShown,
         };
     }
 };

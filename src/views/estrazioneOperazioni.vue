@@ -242,7 +242,7 @@ export default {
 
     const timer = ref(0); // Tracks current countdown for each operation
     const gameTimer = ref(10); // The set duration for each operation
-    let timerInterval = null;
+    let timerIntervalEO = null;
 
     const toggleConfig = () => {
       showConfig.value = !showConfig.value;
@@ -287,11 +287,11 @@ export default {
 
     const stopGame = () => {
       gameStarted.value = false;
-      clearInterval(timerInterval);
+      clearInterval(timerIntervalEO);
     };
 
     const endGame = () => {
-      clearInterval(timerInterval);
+      clearInterval(timerIntervalEO);
       gameStarted.value = false;
       showResults.value = true;
     };
@@ -309,7 +309,7 @@ export default {
 
     // Funzione per inviare e valutare la risposta
     const submitAnswer = () => {
-      clearInterval(timerInterval.value); // Ferma il timer corrente
+      clearInterval(timerIntervalEO.value); // Ferma il timer corrente
 
       if (userAnswer.value.replace(/\s+/g, '').trim() === currentOperation.value.correctAnswer.replace(/\s+/g, '').trim()) {
         // Risposta corretta
@@ -333,8 +333,8 @@ export default {
 
     // Pulisce il timer quando il componente viene smontato
     onBeforeUnmount(() => {
-      if (timerInterval.value !== null) {
-        clearInterval(timerInterval.value);
+      if (timerIntervalEO!== null) {
+        clearInterval(timerIntervalEO.value);
       }
     });
 
@@ -356,7 +356,7 @@ export default {
     // Funzione per avviare il timer
     const startTimer = () => {
       timer.value = gameTimer.value*2 ;
-      clearInterval(timerInterval); // Clear previous timer if exists
+      clearInterval(timerIntervalEO); // Clear previous timer if exists
       timeBarWidth.value = 100;
       timerClass.value = 'no-transition'; // Rendi il ripristino istantaneo
 
@@ -364,7 +364,7 @@ export default {
         timerClass.value = 'smooth-transition'; // Riabilita l'animazione
       }, 20); // 20ms per permettere il cambio di classe
 
-      timerInterval = setInterval(() => {
+      timerIntervalEO = setInterval(() => {
         if (gameStarted.value==true) {
           timeBarWidth.value -= (50 / gameTimer.value); // Riduci la larghezza in base al tempo
           if (timer.value > 0) {
@@ -378,7 +378,7 @@ export default {
 
     // Funzione per gestire la scadenza del timer
     const handleTimerExpiration = () => {
-      clearInterval(timerInterval.value); // Ferma il timer
+      clearInterval(timerIntervalEO.value); // Ferma il timer
       progressArray.value[extractedOperations.value.length - 1] = 'incomplete'; // Segna l'operazione come non risolta
       nextOperation(); // Procede con una nuova operazione
     };

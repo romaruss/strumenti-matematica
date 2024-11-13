@@ -37,6 +37,11 @@
   border-radius: 50%;
   background-color: green;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Centra il contenuto sia in verticale che in orizzontale */
+  font-size: 14px; /* Regola la dimensione del testo */
+  font-weight: bold; /* Rende il testo più visibile */
 }
 
 .dot.red {
@@ -44,6 +49,7 @@
   color: white;
   border: 2px solid #b00;
 }
+
 
 /* Zona a destra: Bottone Configura */
 .right-panel {
@@ -140,6 +146,41 @@ button:disabled {
   display: inline-block;
   
 }
+
+/* Stile per l'area dei risultati */
+.results-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #f3f3f3;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 100%; /* Larghezza massima per centrare */
+}
+
+/* Stile per il messaggio dei risultati */
+.results-message {
+  font-size: 24px; /* Ingrandisce il testo */
+  font-weight: bold; /* Grassetto per evidenziare */
+  text-align: center; /* Centro il testo */
+  color: #333;
+  margin-top: 10px;
+  margin-bottom: 20px; /* Spazio aggiuntivo tra il messaggio e il bottone */
+}
+
+
+/* Stile per il titolo dei risultati */
+.results-container h3 {
+  font-size: 32px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
 
 /* Indicatori di stato */
 .pending {
