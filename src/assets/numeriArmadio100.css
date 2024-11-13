@@ -26,8 +26,8 @@
 /* Griglia dei pallini */
 .grid {
   display: grid;
-  grid-template-columns: repeat(10, 30px);
-  grid-template-rows: repeat(10, 30px);
+  grid-template-columns: repeat(4, 30px) 50px repeat(5, 30px); /* Spazio tra la 5° e 6° colonna */
+  grid-template-rows: repeat(4, 30px) 50px repeat(5, 30px); /* Spazio tra la 5° e 6° riga */
   gap: 5px;
 }
 
@@ -71,35 +71,7 @@
 }
 
 /* Bottone di configurazione */
-.config-button {
-  padding: 10px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
 
-.config-button:disabled {
-  background-color: #dcdcdc;
-  cursor: not-allowed;
-}
-
-button {
-  padding: 10px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #45a049;
-}
-
-button:disabled {
-  background-color: #dcdcdc;
-  cursor: not-allowed;
-}
 
 .overlay {
   position: fixed;
@@ -122,30 +94,6 @@ button:disabled {
   padding: 5px 0; /* Spazio interno per una migliore distribuzione */
 }
 
-.time-bar {
-  width: 100%;
-  height: 20px;
-  background-color: green;
-  transition: width 1s linear; /* Anima il cambiamento di larghezza */
-  position: relative; /* Assicura che la barra rimanga all'interno di .progress-area */
-}
-
-.progress-indicator {
-  display: flex;
-  margin-top: 5px; /* Ridotto per evitare margini esterni e mantenere all'interno di .progress-area */
-  gap: 5px; /* Spaziatura tra gli indicatori */
-  justify-content: center;
-}
-
-
-.progress-indicator span {
-  width: 20px;
-  height: 20px;
-  background-color: blue;
-  border-radius: 50%;
-  display: inline-block;
-  
-}
 
 /* Stile per l'area dei risultati */
 .results-container {
@@ -181,25 +129,3 @@ button:disabled {
   color: #333;
 }
 
-
-/* Indicatori di stato */
-.pending {
-  background-color: gray;
-}
-
-.complete {
-  background-color: green;
-}
-
-.incomplete {
-  background-color: orange;
-}
-
-
-.no-transition {
-  transition: none;
-}
-
-.smooth-transition {
-  transition: width 1s linear; /* Anima il cambiamento di larghezza */
-}

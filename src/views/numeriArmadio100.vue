@@ -23,8 +23,8 @@
         <div class="main-area">
             <div class="left-panel">
                 <!-- Slider per il tempo -->
-                <label for="time-slider">Tempo tra le estrazioni (secondi):</label>
-                <input type="range" id="time-slider" v-model="gameTimer" min="1" max="10" step="1" />
+                <label for="time-slider"  >Tempo tra le estrazioni (secondi):</label>
+                <input type="range" id="time-slider" :disabled="gameStarted" v-model="gameTimer" min="1" max="10" step="1" />
                 <span>{{ gameTimer }} secondi</span>
 
                 <!-- Bottone Inizia / Stop -->
@@ -39,7 +39,7 @@
                 <!-- Griglia di pallini -->
                 <div id="grid" class="grid">
                     <div v-for="(dot, index) in totalDots" :key="index" :class="['dot', { 'red': dot.isRed }]">
-                        <span v-if="dot.isRed && resultShown">{{ index }}</span> <!-- Mostra l'indice all'interno del pallino rosso -->
+                        <span v-if="dot.isRed && resultShown">{{ index+1 }}</span> <!-- Mostra l'indice all'interno del pallino rosso -->
                     </div>
 
                 </div>
@@ -65,7 +65,7 @@
         <!-- Risultati -->
         <div v-if="showResultsButton" class="results-container">
             <div class="results-message">{{ resultsMessage }}</div>
-            <button @click="showResults">Visualizza Risultati</button>
+            <button @click="showResults" :hidden="resultShown">Visualizza Risultati</button>
         </div>
 
     </div>
@@ -99,7 +99,7 @@ export default {
         const numeroEstratto = ref(null);
 
         const showResults = () => {
-            resultsMessage.value = "Numeri estratti: " + extractedDots.value.join(", ");  // Mostra i numeri estratti
+            resultsMessage.value = "Numeri estratti: " + extractedDots.value.map(num => num + 1).join(", ");     // Mostra i numeri estratti
             // Colora i pallini estratti di rosso
             extractedDots.value.forEach(index => {
                 totalDots[index].isRed = true;  // Colora i pallini estratti
@@ -112,7 +112,7 @@ export default {
         const toggleConfig = () => {
             showConfig.value = !showConfig.value;
            
-            progressArray.value=Array(selectedDotCount.value).fill('pending') 
+            progressArray.value=Array(parseInt(selectedDotCount.value)).fill('pending') 
 
             saveconfig();
 
@@ -123,7 +123,7 @@ export default {
         const startGame = () => {
             gameStarted.value = true;
             showResultsButton.value = false;
-            progressArray.value = Array(selectedDotCount.value).fill('pending');  // Inizia lo stato di progressione
+            progressArray.value = Array(parseInt(selectedDotCount.value)).fill('pending');  // Inizia lo stato di progressione
             resultsMessage.value = "";
             totalDots.forEach(dot => dot.isRed = false); // Reset alla griglia (tutti i pallini verdi)
             extractedDots.value = [];  // Pulisci gli estratti precedenti
@@ -133,14 +133,16 @@ export default {
         const gameCycle = () => {
 
             //controlla se sono finiti i pallini da estrarre
-            if (extractedDots.value.length < selectedDotCount.value) {
+            if (extractedDots.value.length < parseInt(selectedDotCount.value)) {
                 if (numeroEstratto.value) {
                     totalDots[numeroEstratto.value].isRed = false; ////resetta il pallino precedente
                 }
                 numeroEstratto.value = extractDot(); ////estrae un pallino
                 totalDots[numeroEstratto.value].isRed = true; ////colora il pallino di rosso
-                extractedDots.value.push(numeroEstratto.value);     ////aggiunge il pallino ai risultati
                 progressArray.value[extractedDots.value.length - 1] = 'incomplete'; // Fa avanzare la barra dei progressi
+                extractedDots.value.push(numeroEstratto.value);     ////aggiunge il pallino ai risultati
+                progressArray.value[extractedDots.value.length - 1] = 'active'; // Fa avanzare la barra dei progressi
+                
 
                 // Suono
                 if (enableSound.value) {
@@ -153,6 +155,7 @@ export default {
             } else {
                 if (numeroEstratto.value) {
                     totalDots[numeroEstratto.value].isRed = false; ////resetta il pallino precedente
+                    progressArray.value[extractedDots.value.length - 1] = 'incomplete'; // Fa avanzare la barra dei progressi
                 }
                 stopGame();  // Altrimenti, ferma il gioco
             }
@@ -203,20 +206,13 @@ export default {
         // Funzione per riavviare il gioco
         const restartGame = () => {
             totalDots.forEach(dot => dot.isRed = false);
-            //progressArray.value = Array(selectedDotCount.value).fill('pending');
-            progressArray.value = Array(7).fill('pending');
+            progressArray.value = Array(parseInt(selectedDotCount.value)).fill('pending');
+            //progressArray.value = Array(7).fill('pending');
             timeBarWidth.value = 100;
             showResultsButton.value = false;
             //startGame(); 
         };
 
-        // Salva le impostazioni nel localStorage
-        /*watch([selectedDotCount, enableSound, gameTimer], () => {
-            progressArray.value=Array(selectedDotCount.value).fill('pending') 
-            localStorage.setItem('selectedDotCount', selectedDotCount.value);            
-            localStorage.setItem('enableSound', enableSound.value);
-            localStorage.setItem('gameTimer', gameTimer.value);
-        });*/
 
         const saveconfig= () =>{
 
@@ -253,4 +249,5 @@ export default {
 </script>
 
 
-<style src="@/assets/numeriArmadio100.css"></style>
+<style  scoped src="@/assets/numeriArmadio100.css"></style>
+<style  src="@/assets/comune.css"></style>
