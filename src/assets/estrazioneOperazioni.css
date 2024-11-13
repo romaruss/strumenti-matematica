@@ -22,6 +22,14 @@
   position: relative; /* Necessario per il posizionamento assoluto dei figli */
 }
 
+/* Stile comune per i pulsanti */
+
+
+/* Stile specifico per il pulsante "Configurazione" */
+/* .config-button {
+    margin-bottom: 20px; //Margine per distanziarlo da altri elementi
+  }*/
+
 /* Stile specifico per il pulsante "Configurazione" */
 .config-button {
   position: absolute; /* Posizione assoluta per il posizionamento */
@@ -86,6 +94,12 @@ input[type='range'] {
   gap: 5px; /* Spaziatura tra .time-bar e .progress-indicator */
   padding: 5px 0; /* Spazio interno per una migliore distribuzione */
 }
+
+
+
+
+
+
 
 /* Tabella dei risultati */
 .results {
