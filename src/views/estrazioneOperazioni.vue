@@ -422,6 +422,11 @@ export default {
 };
 </script>
 
-<style scoped src="@/assets/estrazioneOperazioni.css"></style>
-<style scoped src="@/assets/estrazioneOperazioni-pannello.css"></style>
 <style  src="@/assets/comune.css"></style>
+
+<style scoped>
+/* Importa i file CSS esterni */
+@import "@/assets/estrazioneOperazioni.css";
+@import "@/assets/estrazioneOperazioni-pannello.css";
+
+</style>
