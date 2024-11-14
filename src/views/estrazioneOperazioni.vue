@@ -97,14 +97,15 @@
       <button v-else @click="stopGame">Stop</button>
 
       <!-- Area per le operazioni estratte -->
-      <div v-if="gameStarted" class="operation-display">
-        <h1>{{ currentOperation.expression }}</h1>
-
+      <div class="operation-display-container">
+        <div v-if="gameStarted" class="operation-display">
+          <h1>{{ currentOperation.expression }}</h1>
+        </div>
         <div class="input-container" v-if="digitalAnswer">
           <!--<label for="answer-input">Inserisci il risultato</label>-->
           <input id='answer-input' v-model="userAnswer" @keyup.enter="submitAnswer" type="text"
             placeholder="Inserisci il risultato" />
-          <button @click="submitAnswer" :disabled="!userAnswer">Invio</button>
+          <button id="input-button" @click="submitAnswer" :disabled="!userAnswer">Invio</button>
         </div>
 
 
@@ -137,7 +138,7 @@
 <script>
 const LIVELLO_DEBUG = true; // Abilita il debug
 import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
-import { generateOperation } from '@/utils/generateOperation';
+import { generateOperation,resetOperations } from '@/utils/generateOperation';
 
 export default {
   setup() {
@@ -230,7 +231,8 @@ export default {
 
     const enableSound = ref(false);
     //const operationsCount = ref(localStorage.config.operationsCount.value || 5);
-    const operationsCount = ref(5);
+    const operationsCount = ref(JSON.parse(localStorage.getItem('config'))?.operationsCount || 5);
+
     const digitalAnswer = ref(false);
 
     const gameStarted = ref(false);
@@ -279,6 +281,7 @@ export default {
       gameStarted.value = true;
       showResults.value = false;
       extractedOperations.value = [];
+      resetOperations();
       //progressArray.value = Array(parseInt(operationsCount.value)).fill('pending'); // Imposta i pallini come "non completati"
 
       generateOperationWrapper(); // Estrai immediatamente la prima operazione
@@ -290,6 +293,7 @@ export default {
     const stopGame = () => {
       gameStarted.value = false;
       clearInterval(timerIntervalEO);
+      progressArray.value = Array(parseInt(operationsCount.value)).fill('pending');
     };
 
     const endGame = () => {
@@ -351,21 +355,21 @@ export default {
       let userAnswerFormatted;
       //pulisce eventuali spazi dalle risposte
       if (typeof currentOperation.value.correctAnswer === 'string') {
-        correctAnswerFormatted = currentOperation.value.correctAnswer.replace(",", ".").trim;
+        correctAnswerFormatted = currentOperation.value.correctAnswer.replace(/\s+/g, "").trim();
       }
       else{
-        correctAnswerFormatted=currentOperation.value.correctAnswer
+        correctAnswerFormatted=String(currentOperation.value.correctAnswer)
       }
 
       if (typeof userAnswer.value === 'string') {
-        userAnswerFormatted = userAnswer.value.replace(",", ".").trim;
+        userAnswerFormatted = userAnswer.value.replace(/\s+/g, "").trim();
       }
       else{
-        userAnswerFormatted=userAnswer.value
+        userAnswerFormatted=String(userAnswer.value)
       }
 
 
-      if (userAnswerFormatted.value === correctAnswerFormatted.value) {
+      if (userAnswerFormatted=== correctAnswerFormatted) {
         // Risposta corretta
         progressArray.value[extractedOperations.value.length - 1] = 'correct';
       } else {
@@ -395,6 +399,7 @@ export default {
       progressArray.value = [];
       currentOperation.value = null;
       timeBarWidth.value = 100;
+      progressArray.value = Array(parseInt(operationsCount.value)).fill('pending');
     };
 
     const timerClass = ref(''); // Gestirà l'animazione della barra

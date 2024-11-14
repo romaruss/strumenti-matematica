@@ -10,6 +10,9 @@ const getRandomNumber = (min, max) => {
   return num
 }
 
+function resetOperations() {
+   extractedOperations.values = []
+}
 // Verifica che l'operazione non sia un duplicato
 const isDuplicate = (expression) => {
   return extractedOperations.some((op) => op.expression === expression)
@@ -339,4 +342,4 @@ function generateDivRestoInt() {
 }
 
 
-export { generateOperation }
+export { generateOperation,resetOperations }
