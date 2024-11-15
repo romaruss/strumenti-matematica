@@ -13,21 +13,22 @@
   }
   
   .config-title {
-    grid-column: 1 / -1;
     text-align: center;
     font-size: 1.5em;
     font-weight: bold;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
     margin-bottom: 20px;
   }
   
-  /* Configurazione della griglia */
-  .config-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto auto;
-    width: 100%;
-    gap: 10px;
-  }
+/* Griglia delle configurazioni */
+.config-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Due colonne */
+  grid-template-rows: auto auto auto; /* Tre righe */
+  gap: 10px;
+  margin-bottom: 20px;
+}
   
   /* Titoli evidenziati */
   .highlighted {
@@ -38,19 +39,21 @@
   /* Colonne di configurazione */
   .config-column {
     padding: 10px;
-    background-color: #f2f2f2;
+    background-color: #f9f9f9;
     border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
   }
   
   /* Riga a larghezza intera per altre configurazioni */
   .config-full-row {
-    grid-column: 1 / -1;
+    grid-column: 1 / -1; /* Occupa entrambe le colonne */
     padding: 10px;
-    background-color: #f5f5f5;
+    background-color: #f2f2f2;
     border-radius: 5px;
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 10px;
   }
   
@@ -58,7 +61,7 @@
   .button-center {
     display: flex;
     justify-content: center;
-    width: 100%;
+    margin-top: auto; /* Spinge il pulsante in fondo */
   }
   
   /* Rientro per gli elementi figli */
@@ -67,21 +70,17 @@
   }
   
   
-  
-  /* Stile per il bottone di chiusura */
+  /* Pulsante Chiudi */
   .config-menu button {
-    margin-top: 20px;
-    padding: 8px 16px;
+    padding: 10px 20px;
     background-color: #2a9df4;
     color: white;
     border: none;
     border-radius: 4px;
     font-weight: bold;
     cursor: pointer;
-    
   }
   
   .config-menu button:hover {
     background-color: #2186c4;
   }
-  

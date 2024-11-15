@@ -1,0 +1,231 @@
+/* *******************************/
+/* CONFIGURAZIONE AREE PRINCIPALI*/
+/* *******************************/
+
+/* RIGA 1 (con 3 colonne) */
+.main-area-row-1 {
+    display: flex;
+    flex: 1; /* occupa il 100% della larghezza */
+    gap: 20px;
+}
+
+/* MAIN AREA */
+.main-area {
+    display: flex;
+    flex-direction: column; /* Organizza le righe verticalmente */
+    height: 100vh;
+    padding: 20px;
+    gap: 20px;
+    background-color: #dd33b3;
+}
+
+/* AREA LATERALE DESTRA */
+#main-area-right-panel {
+    flex: 1; /* occupa una porzione della riga */
+    display: flex;
+    flex-direction: column;
+    background-color: #0f9938;
+}
+
+
+/* AREA LATERALE SINISTRA */
+#main-area-left-panel {
+    flex: 1; /* occupa una porzione della riga */
+    display: flex;
+    flex-direction: column;
+    background-color: #a4a708;
+}
+
+/* AREA CENTRALE */
+#main-area-center {
+    flex: 2; /* occupa una porzione maggiore della riga */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0; /* Colore di sfondo per distinguere l'area centrale */
+}
+
+/* RIGA 2 (area bottom) */
+.main-area-row-2 {
+    width: 100%; /* occupa tutta la larghezza della pagina */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-color: #f2f2f2;
+}
+/* AREA BOTTOM */
+#main-area-bottom {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-color: #a80909;
+}
+
+/* RIGA 3 (area result) */
+.main-area-row-3 {
+    width: 100%; /* occupa tutta la larghezza della pagina */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-color: #e0e0e0; /* Colore di sfondo per la result area */
+}
+
+/* *******************************/
+/* ****CONFIGURAZIONE PULSANTI****/
+/* *******************************/
+
+/* PULSANTI */
+/* PULSANTI */
+button {
+    background-color: #007bff; /* Cambia il colore di sfondo come desiderato */
+    color: white; /* Colore del testo */
+    border: none; /* Rimuovi il bordo */
+    border-radius: 5px; /* Bordo arrotondato */
+    padding: 10px 20px; /* Padding interno */
+    cursor: pointer; /* Puntatore del mouse */
+    font-size: 16px; /* Dimensione del font */
+  }
+
+button:hover {
+    opacity: 0.9;
+  }
+
+.config-button {
+  padding: 10px;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.config-button:disabled {
+  background-color: #dcdcdc;
+  cursor: not-allowed;
+}
+
+button:disabled {
+  background-color: #dcdcdc;
+  cursor: not-allowed;
+}
+
+.results button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+
+/* *******************************/
+/* ****PANNELLO DI CONFIGURAZIONE****/
+/* *******************************/
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+
+
+/* Stile per il timer di gioco */
+#gameTimerContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+/* Stile per il controllo del timer */
+.timer-slider {
+    width: 200px;
+}
+
+/* Pulsanti di gioco */
+#gameButtonscontainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* *******************************/
+/* *******BARRA DEL TEMPO*********/
+/* *******************************/
+
+.time-bar {
+    width: 100%;
+    height: 20px;
+    background-color: green;
+    transition: width 1s linear; /* Anima il cambiamento di larghezza */
+    position: relative; /* Assicura che la barra rimanga all'interno di .progress-area */
+  }
+
+  .no-transition {
+    transition: none;
+  }
+  
+  .smooth-transition {
+    transition: width 1s linear; /* Anima il cambiamento di larghezza */
+  }
+
+  /* *******************************/
+/* *******PROGRESS AREA*********/
+/* *******************************/
+
+/*BARRA DEI PROGRESSI*/
+.progress-indicator {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+    justify-content: center;
+  }
+  
+  .progress-indicator span {
+    width: 20px;
+    height: 20px;
+    background-color: blue;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .progress-indicator span.pending {
+    background-color: blue;
+  }
+  
+  .progress-indicator span.correct {
+    background-color: green;
+  }
+  
+  .progress-indicator span.incorrect {
+    background-color: red;
+  }
+  
+  .progress-indicator span.active {
+    background-color: rgb(14, 145, 221);
+  }
+  
+  .progress-indicator span.incomplete {
+    background-color: orange !important;
+  }
+
+  .progress-indicator span {
+    width: 20px;
+    height: 20px;
+    background-color: blue;
+    border-radius: 50%;
+    display: inline-block;
+    
+  }

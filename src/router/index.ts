@@ -20,8 +20,16 @@ const router = createRouter({
       name: 'numeriArmadio100',
       component: () => import('@/views/numeriArmadio100.vue')
       
+    },
+    {
+      path: '/giocoATempo',
+      name: 'giocoATempo',
+      component: () => import('@/views/ContenitoreGiocoATempo.vue')
+      
     }
   ]
 })
 
 export default router
+
+

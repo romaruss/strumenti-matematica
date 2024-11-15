@@ -4,6 +4,7 @@
         <ul>
             <li><router-link to="/estrazioneOperazioni">Operazioni</router-link></li>
             <li><router-link to="/numeriArmadio100">Armadio del 100</router-link></li>
+            <li><router-link to="/giocoATempo">Gioco a Tempo</router-link></li>
             <li><router-link to="/">Tabelline</router-link></li>
             <li><router-link to="/">Home</router-link></li>
         
