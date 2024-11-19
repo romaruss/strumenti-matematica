@@ -367,8 +367,6 @@ export default {
       else{
         userAnswerFormatted=String(userAnswer.value)
       }
-
-
       if (userAnswerFormatted=== correctAnswerFormatted) {
         // Risposta corretta
         progressArray.value[extractedOperations.value.length - 1] = 'correct';
@@ -380,6 +378,10 @@ export default {
       generateOperationWrapper(); // Procede con una nuova operazione
     };
 
+const playSound = () => {
+    const bellSound = new Audio("/campanella.mp3");
+    bellSound.play();
+  };
 
     // Pulisce il timer quando il componente viene smontato
     onBeforeUnmount(() => {
