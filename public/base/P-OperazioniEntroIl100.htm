@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operazioni entro il 100</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+        }
+        #operation {
+            font-size: 3em;
+            margin: 20px;
+        }
+        #startButton, #resultsButton, #restartButton {
+            padding: 10px 20px;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+        #results {
+            margin-top: 20px;
+            display: none;
+            font-size: 1.5em; /* Aumentato il font size dei risultati */
+            text-align: left; /* Allinea il testo a sinistra */
+        }
+        #progressBar {
+            width: 100%;
+            height: 30px;
+            background-color: #ddd;
+            margin: 20px 0;
+        }
+        #progress {
+            height: 100%;
+            width: 100%;
+            background-color: #4caf50; /* Colore verde */
+        }
+        .square {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background-color: blue;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+        #config {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            text-align: left;
+        }
+        #slider {
+            width: 200px;
+        }
+        #resultsTable {
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        #resultsTable th, #resultsTable td {
+            border: 1px solid black;
+            padding: 15px; /* Aumentato il padding */
+            text-align: center;
+            font-size: 1.2em; /* Aumentato il font size */
+        }
+        #resultsTable th {
+            background-color: #f2f2f2; /* Colore di sfondo per l'intestazione */
+        }
+ /*     #sound-control {
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    margin-top: 10px;
+}*/
+
+    </style>
+</head>
+<body>
+
+    <h1>Operazioni entro il 100</h1>
+    <div id="config">
+        <label for="timeSlider">Tempo (5-30 secondi):</label>
+        <input type="range" id="timeSlider" min="5" max="30" value="10">
+        <span id="timeValue">10</span> secondi<br>
+      
+         <div id="sound-control">
+    <label>
+        <input type="checkbox" id="soundToggle" checked>
+        Attiva suono campanella
+    </label>
+</div>
+
+        
+        <label><input type="checkbox" id="additionCheck" checked> Includi somme</label><br>
+        <label><input type="checkbox" id="firstAddendRound" disabled> Primo addendo solo decine tonde</label><br>
+        <label><input type="checkbox" id="secondAddendRound" disabled> Secondo addendo solo decine tonde</label><br>
+        <label><input type="checkbox" id="threeAddends" disabled> Tre addendi</label><br>
+        <label><input type="checkbox" id="thirdAddendRound" disabled> Terzo addendo solo decine tonde</label><br>
+
+        <label><input type="checkbox" id="subtractionCheck" checked> Includi sottrazioni</label><br>
+        <label><input type="checkbox" id="minuendRound" disabled> Minuendo solo decine intere</label><br>
+        <label><input type="checkbox" id="subtrahendRound" disabled> Sottraendo solo decine intere</label><br>
+     
+    </div>
+
+
+    <button id="startButton">Inizia</button>
+    <div id="operation"></div>
+    <div id="progressBar"><div id="progress"></div></div>
+    <div id="squaresContainer"></div>
+    <button id="resultsButton" style="display: none;">Risultati</button>
+    <button id="restartButton" style="display: none;">Ricomincia</button>
+    <div id="results"></div>
+   <button id="homeButton" style="position: fixed; bottom: 20px; right: 20px; padding: 10px; font-size: 1em;">Home</button>
+  <audio id="bellSound" src="https://cdn.glitch.global/0819f66c-524a-47c7-aa70-fc054f3eb712/campanella.mp3?v=1729869377632" preload="auto"></audio>
+
+
+    <script>
+        let currentOperationIndex = 0;
+        const operations = [];
+        const results = [];
+        const maxOperations = 10;
+        let timerInterval;
+        let operationTime = 10; // Default time in seconds
+        let timeInterval; // Variable to hold the interval for changing operations
+
+        // Set slider value from local storage if it exists
+        const savedTime = localStorage.getItem('operationTime');
+        if (savedTime) {
+            operationTime = savedTime;
+            document.getElementById('timeSlider').value = operationTime;
+            document.getElementById('timeValue').textContent = operationTime;
+        }
+
+        // Update the displayed value of the slider and save it
+        document.getElementById('timeSlider').addEventListener('input', function() {
+            operationTime = this.value;
+            document.getElementById('timeValue').textContent = operationTime;
+            localStorage.setItem('operationTime', operationTime); // Save to local storage
+        });
+      
+      // Aggiorna lo stato di abilitazione dei checkbox in base alla selezione di somme e sottrazioni
+document.getElementById('additionCheck').addEventListener('change', function() {
+    const enable = this.checked;
+    document.getElementById('firstAddendRound').disabled = !enable;
+    document.getElementById('secondAddendRound').disabled = !enable;
+    document.getElementById('threeAddends').disabled = !enable;
+    document.getElementById('thirdAddendRound').disabled = !enable;
+});
+
+document.getElementById('subtractionCheck').addEventListener('change', function() {
+    const enable = this.checked;
+    document.getElementById('minuendRound').disabled = !enable;
+    document.getElementById('subtrahendRound').disabled = !enable;
+});
+
+        function generateOperation() {
+            let operation = '';
+            let result = 0;
+            const includeAddition = document.getElementById('additionCheck').checked;
+            const includeSubtraction = document.getElementById('subtractionCheck').checked;
+            const firstAddendRound = document.getElementById('firstAddendRound').checked;
+            const secondAddendRound = document.getElementById('secondAddendRound').checked;
+            const threeAddends = document.getElementById('threeAddends').checked;
+            const thirdAddendRound = document.getElementById('thirdAddendRound').checked;
+            const minuendRound = document.getElementById('minuendRound').checked;
+            const subtrahendRound = document.getElementById('subtrahendRound').checked;
+
+            const canAdd = includeAddition;
+            const canSubtract = includeSubtraction;
+
+            function getRandomNonZero(min, max) {
+                let num;
+                do {
+                    num = Math.floor(Math.random() * (max - min + 1)) + min;
+                } while (num === 0); // Esclude lo 0
+                return num;
+            }
+
+            // Genera una somma o sottrazione
+            if (canAdd && (Math.random() < 0.5 || !canSubtract)) {
+                let num1 = firstAddendRound ? getRandomNonZero(1, 9) * 10 : getRandomNonZero(1, 99); // Esclude lo 0
+                let num2 = secondAddendRound ? getRandomNonZero(1, 9) * 10 : getRandomNonZero(1, 100 - num1); // Esclude lo 0
+
+                if (threeAddends) {
+                    let num3 = thirdAddendRound ? getRandomNonZero(1, 9) * 10 : getRandomNonZero(1, 100 - num1 - num2); // Esclude lo 0
+                    operation = `${num1} + ${num2} + ${num3}`;
+                    result = num1 + num2 + num3;
+                } else {
+                    operation = `${num1} + ${num2}`;
+                    result = num1 + num2;
+                }
+            } else if (canSubtract) {
+                let num1 = minuendRound ? getRandomNonZero(1, 9) * 10 : getRandomNonZero(1, 99); // Esclude lo 0
+                let num2 = subtrahendRound ? getRandomNonZero(1, 9) * 10 : getRandomNonZero(1, num1); // Esclude lo 0
+                operation = `${num1} - ${num2}`;
+                result = num1 - num2;
+            }
+
+            // Evita somme con risultato maggiore di 100 o sottrazioni con sottraendo maggiore di 100
+            if (result > 100 || result < 0) {
+                generateOperation(); // Ricrea l'operazione se non valida
+            } else {
+                operations.push(operation);
+                results.push(result);
+            }
+        }
+const bellSound = document.getElementById('bellSound');
+const soundToggle = document.getElementById('soundToggle');
+      
+        function displayOperation() {
+            if (currentOperationIndex < maxOperations) {
+                generateOperation();
+                document.getElementById('operation').textContent = operations[currentOperationIndex];
+                document.getElementById('squaresContainer').children[currentOperationIndex].style.backgroundColor = 'red'; // Colora il quadratino
+                currentOperationIndex++;
+                resetProgressBar(); // Riempie la barra completamente
+                startProgressBar(); // Avvia la barra di avanzamento
+              // Verifica se il suono è attivo
+        if (soundToggle.checked) {
+            bellSound.play();
+        }
+            } else {
+                endGame();
+            }
+        }
+
+        function resetProgressBar() {
+            document.getElementById('progress').style.width = '100%'; // Riempie immediatamente la barra
+        }
+
+        function startProgressBar() {
+            let progress = 100; // Percentuale iniziale
+            clearInterval(timerInterval); // Ferma il timer se è già in esecuzione
+            timerInterval = setInterval(() => {
+                progress -= (100 / (operationTime * 10)); // Diminuisci la percentuale in base al tempo
+                if (progress <= 0) {
+                    clearInterval(timerInterval);
+                    displayOperation(); // Mostra la prossima operazione quando il timer scade
+                } else {
+                    document.getElementById('progress').style.width = `${progress}%`; // Aggiorna la larghezza della barra
+                }
+            }, 100);
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            document.getElementById('operation').style.display = 'none';
+            document.getElementById('squaresContainer').style.display = 'none';
+            document.getElementById('resultsButton').style.display = 'inline';
+            document.getElementById('restartButton').style.display = 'inline';
+            displayResults();
+        }
+
+        function displayResults() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = ''; // Pulisce i risultati precedenti
+            resultsDiv.style.display = 'block';
+
+            const resultsTable = document.createElement('table');
+            resultsTable.setAttribute('id', 'resultsTable');
+
+            const headerRow = document.createElement('tr');
+            const operationHeader = document.createElement('th');
+            operationHeader.textContent = 'Operazione';
+            const resultHeader = document.createElement('th');
+            resultHeader.textContent = 'Risultato';
+            headerRow.appendChild(operationHeader);
+            headerRow.appendChild(resultHeader);
+            resultsTable.appendChild(headerRow);
+
+            for (let i = 0; i < operations.length; i++) {
+                const row = document.createElement('tr');
+                const operationCell = document.createElement('td');
+                operationCell.textContent = operations[i];
+                const resultCell = document.createElement('td');
+                resultCell.textContent = results[i];
+                row.appendChild(operationCell);
+                row.appendChild(resultCell);
+                resultsTable.appendChild(row);
+            }
+
+            resultsDiv.appendChild(resultsTable);
+        }
+
+        // Aggiunge quadratini
+        for (let i = 0; i < maxOperations; i++) {
+            const square = document.createElement('div');
+            square.classList.add('square');
+            document.getElementById('squaresContainer').appendChild(square);
+        }
+
+        document.getElementById('startButton').addEventListener('click', function() {
+            currentOperationIndex = 0;
+            operations.length = 0; // Pulisce le operazioni precedenti
+            results.length = 0; // Pulisce i risultati precedenti
+            document.getElementById('operation').style.display = 'block';
+            document.getElementById('squaresContainer').style.display = 'flex'; // Mostra il contenitore dei quadratini
+            displayOperation();
+        });
+
+        document.getElementById('resultsButton').addEventListener('click', function() {
+            endGame();
+        });
+
+        document.getElementById('restartButton').addEventListener('click', function() {
+            location.reload();
+        });
+      document.getElementById('homeButton').addEventListener('click', function() {
+            window.location.href = 'index.html'; // Cambia 'index.html' con il nome della tua pagina principale
+        });
+    </script>
+</body>
+</html>
