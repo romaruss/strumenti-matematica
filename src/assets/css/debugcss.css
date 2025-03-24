@@ -1,0 +1,77 @@
+/* *******************************/
+/* CONFIGURAZIONE AREE PRINCIPALI*/
+/* *******************************/
+
+
+  /* MAIN AREA */
+  .main-area {
+    background-color: #dd33b3;
+  }
+  
+  /* AREA LATERALE DESTRA */
+  #main-area-right-panel {
+
+    background-color: #0f9938;
+  }
+  
+  /* AREA LATERALE SINISTRA */
+  #main-area-left-panel {
+
+    background-color: #a4a708;
+  }
+  
+  /* AREA CENTRALE */
+  #main-area-center {
+
+    background-color: #f0f0f0; /* Colore di sfondo per distinguere l'area centrale */
+  }
+  
+  /* RIGA 2 (area bottom) */
+  .main-area-row-2 {
+
+    background-color: #f2f2f2;
+  }
+  /* AREA BOTTOM */
+  #main-area-bottom {
+
+    background-color: #a80909;
+  }
+  
+  /* RIGA 3 (area result) */
+  .main-area-row-3 {
+
+    background-color: #e0e0e0; /* Colore di sfondo per la result area */
+  }
+  
+  
+  
+  .no-transition {
+    transition: none;
+  }
+  
+  .smooth-transition {
+    transition: width 1s linear; /* Anima il cambiamento di larghezza */
+  }
+  
+  /* *******************************/
+  /* *******PROGRESS AREA*********/
+  /* *******************************/
+  .progress-area {
+    background-color: yellow;
+
+  }
+  /*BARRA DEI PROGRESSI*/
+  .progress-indicator {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    justify-content: center;
+  }
+  
+  .progress-indicator span {
+
+    background-color: rgb(255, 0, 242);
+
+  }
+
+  

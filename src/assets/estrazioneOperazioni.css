@@ -122,25 +122,6 @@ input[type='range'] {
 
 
 
-/* Progresso e barra del tempo */
-.progress-area {
-  margin-top: 20px;
-  position: relative;
-  width: 100%;
-  height: 80px; /* Altezza aumentata per ospitare .progress-indicator sotto la barra del tempo */
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  gap: 5px; /* Spaziatura tra .time-bar e .progress-indicator */
-  padding: 5px 0; /* Spazio interno per una migliore distribuzione */
-}
-
-
-
-
-
-
-
 /* Tabella dei risultati */
 .results {
   padding: 20px;

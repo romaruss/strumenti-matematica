@@ -1,0 +1,315 @@
+/* *******************************/
+/* CONFIGURAZIONE AREE PRINCIPALI*/
+/* *******************************/
+
+/* RIGA 1 (con 3 colonne) */
+.main-area-row-1 {
+  display: flex;
+  flex: 1; /* occupa il 100% della larghezza */
+  gap: 20px;
+}
+
+/* MAIN AREA */
+.main-area {
+  display: flex;
+  flex-direction: column; /* Organizza le righe verticalmente */
+  height: 100vh;
+  padding: 20px;
+  gap: 20px;
+}
+
+/* AREA LATERALE DESTRA */
+#main-area-right-panel {
+  flex: 1; /* occupa una porzione della riga */
+  display: flex;
+  flex-direction: column;
+}
+
+/* AREA LATERALE SINISTRA */
+#main-area-left-panel {
+  flex: 1; /* occupa una porzione della riga */
+  display: flex;
+  flex-direction: column;
+}
+
+/* AREA CENTRALE */
+#main-area-center {
+  flex: 2; /* occupa una porzione maggiore della riga */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* RIGA 2 (area bottom) */
+.main-area-row-2 {
+  width: 100%; /* occupa tutta la larghezza della pagina */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+/* AREA BOTTOM */
+#main-area-bottom {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* RIGA 3 (area result) */
+.main-area-row-3 {
+  width: 100%; /* occupa tutta la larghezza della pagina */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background-color: #e0e0e0; /* Colore di sfondo per la result area */
+}
+
+/* *******************************/
+/* ****CONFIGURAZIONE PULSANTI****/
+/* *******************************/
+
+/* PULSANTI */
+button {
+  background-color: #007bff; /* Cambia il colore di sfondo come desiderato */
+  color: white; /* Colore del testo */
+  border: none; /* Rimuovi il bordo */
+  border-radius: 5px; /* Bordo arrotondato */
+  padding: 10px 20px; /* Padding interno */
+  cursor: pointer; /* Puntatore del mouse */
+  font-size: 16px; /* Dimensione del font */
+}
+
+/* Contenitore per centrare il pulsante Chiudi */
+.button-center {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+.config-button {
+  padding: 10px;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.config-button:disabled {
+  background-color: #dcdcdc;
+  cursor: not-allowed;
+}
+
+button:disabled {
+  background-color: #dcdcdc;
+  cursor: not-allowed;
+}
+
+.results button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+/* *******************************/
+/* ****PANNELLO DI CONFIGURAZIONE****/
+/* *******************************/
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+
+
+
+/* Config title */
+.config-title h3 {
+  margin: 0;
+  text-align: center;
+}
+
+
+/* Stile per il timer di gioco */
+#gameTimerContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+/* Stile per il controllo del timer */
+.timer-slider {
+  width: 200px;
+}
+
+/* Pulsanti di gioco */
+#gameButtonscontainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* *******************************/
+/* *******BARRA DEL TEMPO*********/
+/* *******************************/
+
+.time-bar {
+  width: 100%;
+  height: 20px;
+  background-color: green;
+  transition: width 1s linear; /* Anima il cambiamento di larghezza */
+  position: relative; /* Assicura che la barra rimanga all'interno di .progress-area */
+}
+
+.no-transition {
+  transition: none;
+}
+
+.smooth-transition {
+  transition: width 1s linear; /* Anima il cambiamento di larghezza */
+}
+
+/* *******************************/
+/* *******PROGRESS AREA*********/
+/* *******************************/
+.progress-area {
+  width: 100%;
+  padding:0;
+}
+/*BARRA DEI PROGRESSI*/
+.progress-indicator {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  justify-content: center;
+}
+
+.progress-indicator span {
+  width: 20px;
+  height: 20px;
+  border-radius: 1%;
+  display: inline-block;
+}
+
+.progress-indicator span.pending {
+  background-color: blue;
+}
+
+.progress-indicator span.correct {
+  background-color: green;
+}
+
+.progress-indicator span.incorrect {
+  background-color: red;
+}
+
+.progress-indicator span.active {
+  background-color: rgb(14, 145, 221);
+}
+
+.progress-indicator span.incomplete {
+  background-color: orange !important;
+}
+
+/*
+/*Area Risultati
+*/
+
+
+
+/*===============================new area risultati============*/
+
+
+.overlay-result {
+  position: fixed; /* Rende l'overlay indipendente dallo scrolling */
+  top: 50%; /* Posiziona al centro verticale */
+  left: 50%; /* Posiziona al centro orizzontale */
+  transform: translate(-50%, -50%); /* Centra esattamente il contenitore */
+  width: 50vw; /* Larghezza fissa al 50% dello schermo */
+  height: 55vh; 
+}
+
+.overlay-container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 500px; /* Larghezza fissa */
+  height: 90%; /* Altezza del container */
+  display: flex;
+  flex-direction: column; /* Dispone gli elementi verticalmente */
+  justify-content: space-between; /* Distribuisce tabella e pulsante */
+  align-items: center; /* Centra elementi orizzontalmente */
+}
+
+/* Stile per la tabella */
+.results-table {
+  width: 90%; /* Larghezza relativa al container */
+  max-height: 70%; /* Altezza massima per la tabella */
+  background-color: #fff;
+  border-collapse: collapse;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+/* Stile per le righe */
+.results-table tr {
+  border-bottom: 1px solid #ddd; /* Bordo sotto ogni riga */
+}
+
+.results-table tr:nth-child(even) {
+  background-color: #f9f9f9; /* Colore alternato per righe pari */
+}
+
+.results-table tr:hover {
+  background-color: #f1f1f1; /* Colore di sfondo al passaggio del mouse */
+}
+
+/* Stile per le celle */
+.results-table td {
+  padding: 10px; /* Spaziatura interna */
+  text-align: center; /* Testo centrato */
+  border: 1px solid #ddd; /* Bordo attorno alle celle */
+}
+
+/* Stile per il bottone */
+.button-center {
+  margin-top: auto; /* Spinge il pulsante verso il basso */
+  width: 100%; /* Si estende orizzontalmente nel container */
+  display: flex;
+  justify-content: center; /* Centra il pulsante orizzontalmente */
+}
+
+.button-center button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.button-center button:hover {
+  background-color: #0056b3;
+}

@@ -12,13 +12,26 @@ const router = createRouter({
     {
       path: '/estrazioneOperazioni',
       name: 'estrazioneOperazioni',
-      component: () => import('@/views/estrazioneOperazioni.vue')
+      component: () => import('@/views/estrazioneOperazioniNew.vue')
       
     },
     {
       path: '/numeriArmadio100',
       name: 'numeriArmadio100',
       component: () => import('@/views/numeriArmadio100.vue')
+      
+    },
+    {
+      path: '/testRobi',
+      name: 'testRobi',
+      component: () => import('@/views/Test_template_robi.vue')
+      
+    }
+    ,
+    {
+      path: '/testMassi',
+      name: 'testMassi',
+      component: () => import('@/views/testMassi.vue')
       
     }
   ]

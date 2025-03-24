@@ -54,12 +54,7 @@
     gap: 10px;
   }
   
-  /* Contenitore per centrare il pulsante Chiudi */
-  .button-center {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-  }
+
   
   /* Rientro per gli elementi figli */
   .config-column div {
